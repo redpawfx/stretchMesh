@@ -1,0 +1,12 @@
+* text=auto !eol
+/CRSpline.h -text
+/IncludeMFnPluginClass.h -text
+/curveColliderLocator.cpp -text
+/curveColliderLocator.h -text
+/ksUtils.h -text
+/pluginMain.cpp -text
+/stretchMeshCmd.cpp -text
+/stretchMeshCmd.h -text
+/stretchMeshConsts.h -text
+/stretchMeshDeformer.cpp -text
+/stretchMeshDeformer.h -text
