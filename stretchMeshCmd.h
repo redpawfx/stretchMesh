@@ -6,7 +6,7 @@
 //
 //  Description:
 // 		This defines a command that will create a stretch mesh node, and initialize
-//		all of the relevant attributes for that node (pyramid coordinates etc.).  The 
+//		all of the relevant attributes for that node (pyramid coordinates etc.).  The
 //		deformer itself is defined in another project (stretchMesh.cpp)
 //
 
@@ -54,7 +54,7 @@ class stretchMeshCmd : public MPxCommand
 {
 public:
 					stretchMeshCmd() {};
-	virtual			~stretchMeshCmd(); 
+	virtual			~stretchMeshCmd();
 
 	static bool		Registered;
 	static MStatus	Register(MFnPlugin& ioPlugin);
@@ -68,13 +68,13 @@ public:
 	bool				isUndoable( ) const;
 	static MSyntax		newSyntax();
 	static void*		creator();
-	
+
 	static MStatus buildstretchMeshCmdMenu();
 
 private:
 	// This is data that is necessary to redo/undo/edit the command.
-	// In edit mode, redoit() needs to know which flags were set on the command line 
-	// so it only sets those.  The <attribute>FlagSet booleans store this information. 
+	// In edit mode, redoit() needs to know which flags were set on the command line
+	// so it only sets those.  The <attribute>FlagSet booleans store this information.
 	bool isEditMode;
 	MSelectionList selected;
 	int collisionStepFlag;
@@ -102,8 +102,8 @@ private:
 	MFnDependencyNode deformerFnDepNode;
 	MStringArray stretchMeshesCreated;
 	MDGModifier dgModifier;
-	
-	// These attributes store the original values of the stretchMesh attributes for 
+
+	// These attributes store the original values of the stretchMesh attributes for
 	// undo purposes
 	int collisionStepOrig;
 	int iterationOrig;
@@ -115,13 +115,14 @@ private:
 	bool getConnectedVerts(MItMeshVertex& meshIter, MIntArray& connVerts, int currVertIndex);
 	bool bubbleSort(MIntArray& vertsToRemove);
 	static MVector getCurrNormal(MPointArray& inputPts, MIntArray& connVerts);
-	static MVector projectVrtToPlane(MVector vrt, MVector nrml, double d);	
+	static MVector projectVrtToPlane(MVector vrt, MVector nrml, double d);
 	bool addCollider();
 	bool addCurveCollider();
 	bool addSphereCollider();
 	bool addAttractor();
 	bool addCurveAttractor();
-	
+
 };
 
 #endif
+

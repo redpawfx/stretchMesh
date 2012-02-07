@@ -28,7 +28,7 @@ MStatus initializePlugin( MObject obj )
 	if ( licensed )
 	{
 		buildMenuCmd = "int $smCmdEcho;\n";
-		buildMenuCmd += "$smCmdEcho = `commandEcho -q -state`;\n";	
+		buildMenuCmd += "$smCmdEcho = `commandEcho -q -state`;\n";
 		buildMenuCmd += "commandEcho -state off;\n";
 		MGlobal::executeCommand(buildMenuCmd);
 	}
@@ -56,7 +56,7 @@ MStatus initializePlugin( MObject obj )
 		status.perror("Couldn't register plugin");
 		return status;
 	}
-	
+
 	// Make the stiffness attribute paintable only if licensed
 	if ( licensed )
 	{
@@ -97,16 +97,16 @@ MStatus uninitializePlugin( MObject obj)
 			return status;
 		}
 	}
-	
+
 	if ( curveColliderLocator::Registered )
 	{
 		status = curveColliderLocator::Deregister( plugin );
-		
+
 		if (!status) {
 			status.perror("Couldn't unload plugin.");
 			return status;
 		}
 	}
-	
+
 	return status;
 }

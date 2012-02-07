@@ -2,7 +2,7 @@
 //
 //  Description:
 // 		This defines a command that will create a stretch mesh node, and initialize
-//		all of the relevant attributes for that node (pyramid coordinates etc.).  The 
+//		all of the relevant attributes for that node (pyramid coordinates etc.).  The
 //		deformer itself is defined in another project (stretchMesh.cpp)
 //
 #define KS_DOUBLE_EQ(x,v) (((v - 0.00000001) < x) && (x <( v + 0.00000001)))
@@ -41,8 +41,8 @@ using namespace std;
 
 // Custom struct for holding the polar coordinates of connected verts.  PolarAngle and polarDistance
 // represent the polar coordinates for the connected vert relative to the current vert. We are using the
-// vector from the current vert to the 1st connected vert (as returned by getConnectedVertices() ) as the 
-// xAxis/polarAxis of the polar coordinate system.  The wedgeAngle represents the angle between the 
+// vector from the current vert to the 1st connected vert (as returned by getConnectedVertices() ) as the
+// xAxis/polarAxis of the polar coordinate system.  The wedgeAngle represents the angle between the
 // two adjacent connected verts
 struct polarCoords {
 	int vertID;
@@ -51,7 +51,7 @@ struct polarCoords {
 	double wedgeAngle;
 };
 // Function for sorting an array of objects of type <polarCoords>
-bool polarCoordsCompare (polarCoords i, polarCoords j) { 
+bool polarCoordsCompare (polarCoords i, polarCoords j) {
 	return (i.polarAngle < j.polarAngle);
 }
 
@@ -82,15 +82,15 @@ MSyntax stretchMeshCmd::newSyntax()
 	syntax.addFlag(kExtendConnectedVertsFlag, kExtendConnectedVertsFlagLong, MSyntax::kBoolean);
 	syntax.useSelectionAsDefault( true );
 	syntax.setObjectType( MSyntax::kSelectionList );
-	
+
 	return syntax;
 }
 
 MStatus stretchMeshCmd::doIt(  const MArgList& args )
 //
 // Description
-//     Gets the currently selected object, and stores it in the local class data.  
-//     Then calls redoit to actually execute the command. 
+//     Gets the currently selected object, and stores it in the local class data.
+//     Then calls redoit to actually execute the command.
 //
 // Note
 //     The doit method should collect whatever information is
@@ -114,9 +114,9 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 	MArgDatabase argData(syntax(), args);
 	MSelectionList argObjects;
 
-	
-	// Initialize the <attribute>FlagSet variables to false so we can tell later on if they 
-	// were set from the command line. 
+
+	// Initialize the <attribute>FlagSet variables to false so we can tell later on if they
+	// were set from the command line.
 	collisionStepFlagSet = false;
 	iterationFlagSet = false;
 	collisionFlagSet = false;
@@ -129,10 +129,10 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 	addSphereColliderFlagSet = false;
 	scaleSafeFlagSet = false;
 	extendConnectedVertsFlagSet = false;
-	
+
 
 	if (argData.isEdit()) { isEditMode = true; }
-		
+
 	if (argData.isFlagSet(kCollisionStepFlag)) {
 		int tmp;
 		status = argData.getFlagArgument(kCollisionStepFlag, 0, tmp);
@@ -165,7 +165,7 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 		stiffnessFlag = tmp;
 		stiffnessFlagSet = true;
 	}else{ stiffnessFlag = STIFFNESS_DFLT; }
-		
+
 	if (argData.isFlagSet(kCollisionFlag)) {
 		bool tmp;
 		status = argData.getFlagArgument(kCollisionFlag, 0, tmp);
@@ -176,7 +176,7 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 		collisionFlag = tmp;
 		collisionFlagSet = true;
 	}else{ collisionFlag = COLLISION_DFLT; }
-	
+
 	if (argData.isFlagSet(kAddColliderFlag)) {
 		MString tmp;
 		status = argData.getFlagArgument(kAddColliderFlag, 0, tmp);
@@ -187,7 +187,7 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 		addColliderFlag = tmp;
 		addColliderFlagSet = true;
 	}
-	
+
 	if (argData.isFlagSet(kAddCurveColliderFlag)) {
 		MString tmp;
 		status = argData.getFlagArgument(kAddCurveColliderFlag, 0, tmp);
@@ -198,7 +198,7 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 		addCurveColliderFlag = tmp;
 		addCurveColliderFlagSet = true;
 	}
-	
+
 	if (argData.isFlagSet(kAddSphereColliderFlag)) {
 		MString tmp;
 		status = argData.getFlagArgument(kAddSphereColliderFlag, 0, tmp);
@@ -209,7 +209,7 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 		addSphereColliderFlag = tmp;
 		addSphereColliderFlagSet = true;
 	}
-	
+
 	if (argData.isFlagSet(kAddAttractorFlag)) {
 		MString tmp;
 		status = argData.getFlagArgument(kAddAttractorFlag, 0, tmp);
@@ -231,7 +231,7 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 		addCurveAttractorFlag = tmp;
 		addCurveAttractorFlagSet = true;
 	}
-	
+
 	if (argData.isFlagSet(kScaleSafeFlag)) {
 		bool tmp;
 		status = argData.getFlagArgument(kScaleSafeFlag, 0, tmp);
@@ -242,7 +242,7 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 		scaleSafeFlag = tmp;
 		scaleSafeFlagSet = true;
 	}else{ scaleSafeFlag = SCALE_SAFE_DFLT; }
-	
+
 	if (argData.isFlagSet(kExtendConnectedVertsFlag)) {
 		bool tmp;
 		status = argData.getFlagArgument(kExtendConnectedVertsFlag, 0, tmp);
@@ -253,7 +253,7 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 		extendConnectedVertsFlag = tmp;
 		extendConnectedVertsFlagSet = true;
 	}else{ extendConnectedVertsFlag = EXTEND_CONN_VRTS_DFLT; }
-	
+
 	argData.getObjects(argObjects);
 	if(argObjects.length() == 0){
 		MGlobal::displayError( "No deformable objects selected." );
@@ -262,7 +262,7 @@ MStatus stretchMeshCmd::parseArgs(const MArgList &args)
 	selected = argObjects;
 
 	return MS::kSuccess;
-}	
+}
 
 MStatus stretchMeshCmd::redoIt()
 //
@@ -280,11 +280,11 @@ MStatus stretchMeshCmd::redoIt()
 	if (MS::kSuccess != status) {
 		cerr << "redoIt: could not create selection list iterator\n";
 		return status;
-	}	
+	}
 	MString currSelected;
 	MSelectionList selectionList;
 	MPlug deformerPlug;
-	unsigned int numShapes;
+	//unsigned int numShapes;
 	int prevIndex;
 	MVector nrml;
 	MPoint currVrtPt;
@@ -318,34 +318,34 @@ MStatus stretchMeshCmd::redoIt()
 	MPlug connVrtIdNrmlOrderPlugArray;
 	MSelectionList degenerateVertList;
 	degenerateVertList.clear();
-	
+
 	clearResult();
-	
+
 	// First, we must determine if we're in edit mode
 	if (isEditMode){
 		if(selected.length() != 1){
 			MGlobal::displayError("A single deformer should be specified in edit/query mode.");
 			return MStatus::kFailure;
 		}
-		
+
 		// Find the StretchMesh node from the selected object
 		MObject argObj;
 		MObject stretchMeshObj;
 		selected.getDependNode(0, argObj);
 		MFnDependencyNode argFn;
 		argFn.setObject(argObj);
-		
+
 		// First, we check to see if argObj is the StretchMesh node.
 		if(argFn.typeName() == "stretchMesh"){
 			deformerFnDepNode.setObject(argObj);
 		}else{
-			// If we've gotten here, the argument to the command was not the stretchMesh, so we 
-			// have to search for it in the input to this mesh's inMesh attr. 
+			// If we've gotten here, the argument to the command was not the stretchMesh, so we
+			// have to search for it in the input to this mesh's inMesh attr.
 			MDagPath argDagPath;
 			selected.getDagPath(0, argDagPath);
 			argDagPath.extendToShapeDirectlyBelow(0);
 			argFn.setObject(argDagPath.node());
-			
+
 			MPlug inMeshPlug;
 			inMeshPlug = argFn.findPlug("inMesh");
 			if(!inMeshPlug.isConnected()){
@@ -354,7 +354,7 @@ MStatus stretchMeshCmd::redoIt()
 				MGlobal::displayError("Expected a stretchMesh deformer or a deformed shape. Found '" + selectionStrings[0] + "' instead.");
 				return MStatus::kFailure;
 			}
-			
+
 			// get the plug connected to the inMesh, this should be a StretchMesh, if not, print error and exit.
 			MPlugArray connectedPlugs;
 			MPlug connectedPlug;
@@ -367,13 +367,13 @@ MStatus stretchMeshCmd::redoIt()
 				return MStatus::kFailure;
 			}
 		}
-		
+
 		// If we've made it here, deformerFnDepNode contains the stretchMesh node.
-		// Set the attributes to be edited.  Only the attributes that were specified to the 
-		// command should be set, we can determine this from the <attribute>FlagSet boolean 
-		// member attributes. 
+		// Set the attributes to be edited.  Only the attributes that were specified to the
+		// command should be set, we can determine this from the <attribute>FlagSet boolean
+		// member attributes.
 		MPlug stretchMeshPlug;
-			
+
 		// get the plug for nodeState, disable the stretchMesh deformer so it's not evaluating as we go.
 		stretchMeshPlug = deformerFnDepNode.findPlug("nodeState");
 		int nodeState;
@@ -386,7 +386,7 @@ MStatus stretchMeshCmd::redoIt()
 			stretchMeshPlug.getValue(collisionStepOrig);
 			stretchMeshPlug.setValue( collisionStepFlag );
 		}
-		
+
 		if(iterationFlagSet){
 			// Store the attribute values before making any changes for undo purposes.
 			stretchMeshPlug = deformerFnDepNode.findPlug("iterations");
@@ -408,7 +408,7 @@ MStatus stretchMeshCmd::redoIt()
 				stretchMeshPlug = stretchMeshPlug.elementByLogicalIndex(itr);
 				stretchMeshPlug.getValue(stiffnessOrigArray[itr]);
 			}
-			
+
 			// set the stiffness values
 			for(int itr = 0; itr < stiffnessOrigArray.length(); itr++){
 				stretchMeshPlug = deformerFnDepNode.findPlug("stiffnessList");
@@ -425,7 +425,7 @@ MStatus stretchMeshCmd::redoIt()
 			stretchMeshPlug.getValue(scaleSafeOrig);
 			stretchMeshPlug.setValue( scaleSafeFlag );
 		}
-		
+
 		if(addColliderFlagSet){
 			addCollider();
 		}
@@ -437,7 +437,7 @@ MStatus stretchMeshCmd::redoIt()
 		if(addSphereColliderFlagSet){
 			addSphereCollider();
 		}
-		
+
 		if(addAttractorFlagSet){
 			addAttractor();
 		}
@@ -445,24 +445,24 @@ MStatus stretchMeshCmd::redoIt()
 		if(addCurveAttractorFlagSet){
 			addCurveAttractor();
 		}
-		
+
 		// turn nodeState back to what is was before we started
 		stretchMeshPlug = deformerFnDepNode.findPlug("nodeState");
 		stretchMeshPlug.setValue( nodeState );
 		melResult.append(deformerFnDepNode.name());
-		
+
 		/////////////////////////////////////////////////////////////////////////////
 		//						END EDIT MODE                                ////////
 		/////////////////////////////////////////////////////////////////////////////
 	}else{
-		// We're not in edit mode, so just iterate through the selection list and apply a 
+		// We're not in edit mode, so just iterate through the selection list and apply a
 		// stretchMesh to any selected poly mesh
-		
+
 		for(iter.reset(); !iter.isDone(); iter.next() )
 		{
 			MDagPath selectedItem;
 			iter.getDagPath(selectedItem);
-			
+
 			if(selectedItem.apiType() != MFn::kMesh){
 				MGlobal::displayError("StretchMesh must be applied to a polygonal mesh");
 				continue;
@@ -478,7 +478,7 @@ MStatus stretchMeshCmd::redoIt()
 			MObject deformerObj;
 			selectionList.getDependNode(0, deformerObj);
 			deformerFnDepNode.setObject(deformerObj);
-			
+
 			// set the version of stretchMesh that was used to create this node
 			deformerPlug = deformerFnDepNode.findPlug("stretchMeshVersion");
 			deformerPlug.setValue( SM_VERSION );
@@ -486,8 +486,8 @@ MStatus stretchMeshCmd::redoIt()
 			// get the plug for nodeState, disable the stretchMesh deformer so it's not evaluating as we go.
 			deformerPlug = deformerFnDepNode.findPlug("nodeState");
 			deformerPlug.setValue( 1 );
-			
-			// Populate an array with the input point positions 
+
+			// Populate an array with the input point positions
 			MItMeshVertex vertIter( selectedItem );
 			int vertCount = vertIter.count();
 			inputPts.clear();
@@ -495,18 +495,18 @@ MStatus stretchMeshCmd::redoIt()
 			for(vertIter.reset(); !vertIter.isDone(); vertIter.next() ){
 				inputPts[vertIter.index()] = vertIter.position( MSpace::kWorld );
 			}
-			
+
 			connVrtIdPlugArray = deformerFnDepNode.findPlug("connVrtIdList");
 			connVrtIdPlugArray.setNumElements(vertCount);
 			connVrtIdNrmlOrderPlugArray = deformerFnDepNode.findPlug("connVrtIdNrmlOrderList");
 			connVrtIdNrmlOrderPlugArray.setNumElements(vertCount);
-			
+
 			// iterate through each vertex, and set the corresponding pyramid coords on the deformer
 			for(int vertId = 0; vertId < vertCount; vertId++){
 				MItMeshVertex pyramidCoordsIter( selectedItem );
 				pyramidCoordsIter.setIndex(vertId, prevIndex);
 				connVerts.clear();
-				
+
 				if(extendConnectedVertsFlag){
 					getConnectedVerts(pyramidCoordsIter, connVerts, vertId);
 				}else{
@@ -521,32 +521,32 @@ MStatus stretchMeshCmd::redoIt()
 //						connVerts.append( connVertsReverse[connVertsItr] );
 //					}
 				nrml = getCurrNormal(inputPts, connVerts);
-				
+
 				// Determine the d term of the projection plane equation
 				currVrtPt = inputPts[vertId];
 				currVrtPos.x = currVrtPt.x; currVrtPos.y = currVrtPt.y; currVrtPos.z = currVrtPt.z;
 				d = 0.0;
 				for(int j = 0; j < connVerts.length(); j++){
 					connVrtPt = inputPts[connVerts[j]];
-					connVrtPos.x = connVrtPt.x; connVrtPos.y = connVrtPt.y; connVrtPos.z = connVrtPt.z; 
+					connVrtPos.x = connVrtPt.x; connVrtPos.y = connVrtPt.y; connVrtPos.z = connVrtPt.z;
 					d = d + nrml*connVrtPos;
 				}
 				d = -(d/connVerts.length());
-				
-				// project the current vertex and each neighboring vertex onto the projection plane, we'll call these v' and vi' 
+
+				// project the current vertex and each neighboring vertex onto the projection plane, we'll call these v' and vi'
 				// respectively
 				currVrtProj = projectVrtToPlane(currVrtPos, nrml, d);
-				// NOTE: I'm not sure if this is necessary... connVrtProj isn't used anywhere else in the python version of this 
+				// NOTE: I'm not sure if this is necessary... connVrtProj isn't used anywhere else in the python version of this
 				// script... which is what I'm porting from.
 				connVrtProj.x = 0; connVrtProj.y = 0; connVrtProj.z = 0;
 
 				// Here, we're converting all connected points to polar coordinates.  This is a bug fix for vertices that were degenerate.
-				// Converting to polar coordinates ensures that the total of all angles between adjacent connected verts and 
-				// the current vert equals 360.  First we need to define 2d cartesian coordinates based on the planed defined by 
+				// Converting to polar coordinates ensures that the total of all angles between adjacent connected verts and
+				// the current vert equals 360.  First we need to define 2d cartesian coordinates based on the planed defined by
 				// "nrml".  Here, we define the x and y axes of the 2d cartesian coordinate system:
 				MPoint xAxisPt = inputPts[connVerts[0]];
 				MVector xAxis;
-				xAxis.x = xAxisPt.x; xAxis.y = xAxisPt.y; xAxis.z = xAxisPt.z; 
+				xAxis.x = xAxisPt.x; xAxis.y = xAxisPt.y; xAxis.z = xAxisPt.z;
 				xAxis = projectVrtToPlane(xAxis, nrml, d);
 				xAxis = xAxis - currVrtProj;
 				xAxis.normalize();
@@ -554,19 +554,19 @@ MStatus stretchMeshCmd::redoIt()
 				yAxis = nrml^xAxis;
 				yAxis.normalize();
 				// now convert all the connected verts to polar coordinates with respect to the plane defined by "nrml":
-				vector<polarCoords> polarCoordsArray;					
+				vector<polarCoords> polarCoordsArray;
 				polarCoordsArray.clear();
-				
+
 				for(int connVrtItr = 0; connVrtItr < connVerts.length(); connVrtItr++){
 					double xCoord, yCoord;
 					MPoint connPt = inputPts[connVerts[connVrtItr]];
 					MVector connVec;
-					connVec.x = connPt.x; connVec.y = connPt.y; connVec.z = connPt.z; 
+					connVec.x = connPt.x; connVec.y = connPt.y; connVec.z = connPt.z;
 					connVec = projectVrtToPlane(connVec, nrml, d);
 					connVec = connVec - currVrtProj;
 					xCoord = connVec*xAxis;
 					yCoord = connVec*yAxis;
-					
+
 					polarCoords currPolarCoords;
 					currPolarCoords.vertID = connVerts[connVrtItr];
 					currPolarCoords.polarDistance = sqrt((xCoord*xCoord) + (yCoord*yCoord));
@@ -585,14 +585,14 @@ MStatus stretchMeshCmd::redoIt()
 					}else if(KS_DOUBLE_EQ(xCoord, 0.0) && KS_DOUBLE_EQ(yCoord, 0.0)){   // Handling the case of colocated verts
 						currPolarCoords.polarAngle = 0.0;
 					}
-					
+
 					// fill the polarCoords struct
 					polarCoordsArray.push_back(currPolarCoords);
-					
+
 				}
 				// sort the polar coords array according to the polar angle:
 				sort(polarCoordsArray.begin(), polarCoordsArray.end(), polarCoordsCompare );
-				
+
 				// We have the polar angles, but now we need to calculate the wedgeAngles which actually
 				// represent the angles we're interested in (see description in polarCoords struct definition above)
 				for(int i = 0; i < polarCoordsArray.size(); i++){
@@ -602,11 +602,11 @@ MStatus stretchMeshCmd::redoIt()
 						polarCoordsArray[i].wedgeAngle = polarCoordsArray[i].polarAngle - polarCoordsArray[i-1].polarAngle;
 					}
 				}
-				
+
 				// The first wedgeAngle is incorrectly set to zero, fixing that here:
 				polarCoordsArray[0].wedgeAngle = (2.0*PI) - polarCoordsArray.back().polarAngle;
-														
-				// set the attributes representing the connected verts.  
+
+				// set the attributes representing the connected verts.
 				connVrtIdPlug = connVrtIdPlugArray.elementByLogicalIndex(vertId);
 				connVrtIdPlug = connVrtIdPlug.child(0);
 				connVrtIdPlug.setNumElements(connVerts.length());
@@ -615,9 +615,9 @@ MStatus stretchMeshCmd::redoIt()
 				connVrtIdNrmlOrderPlug = connVrtIdNrmlOrderPlug.child(0);
 				connVrtIdNrmlOrderPlug.setNumElements(connVerts.length());
 				for(int j = 0; j < connVerts.length(); j++ ){
-					// We have to store connected vertices in two ways (for backward compatibility), 
+					// We have to store connected vertices in two ways (for backward compatibility),
 					// one in an order consistent with the way the normal is calculated, and one in
-					// a way that is consistent with the way the polar angles are stored. Polar 
+					// a way that is consistent with the way the polar angles are stored. Polar
 					// angle order here:
 					polarCoordsPlug = connVrtIdPlug.elementByLogicalIndex(j);
 					polarCoordsPlug.setValue(polarCoordsArray[j].vertID);
@@ -636,13 +636,13 @@ MStatus stretchMeshCmd::redoIt()
 						MGlobal::executeCommand( "error \"stretchMesh currently only supports meshes with 32 or fewer connected vertices per vertex\"" );
 						return MStatus::kFailure;
 					}
-					double alpha1 = polarCoordsArray[j].wedgeAngle;						
+					double alpha1 = polarCoordsArray[j].wedgeAngle;
 					double alpha2 = polarCoordsArray[(j+1)%connVerts.length()].wedgeAngle;
-					
+
 					weightsSum = weightsSum + (tan(alpha1/2) + tan(alpha2/2))/polarCoordsArray[j].polarDistance;
 					mvWeights.append((tan(alpha1/2) + tan(alpha2/2))/polarCoordsArray[j].polarDistance);
 				}
-				
+
 				int weightItr = 0;
 				for(int j = 0; j < mvWeights.length(); j++){
 					mvWeights[j] = mvWeights[j]/weightsSum;
@@ -653,32 +653,32 @@ MStatus stretchMeshCmd::redoIt()
 					deformerPlug.setValue( mvWeights[j] );
 					weightItr = weightItr + 1;
 				}
-				
+
 				// Determine the normal component of the pyramid coords (the "b" term in the paper)
 				vec = currVrtPos - currVrtProj;
 				double b = vec.length();
 				if ( vec*nrml < 0 ){
 					b = -b;
 				}
-									
+
 				deformerPlug = deformerFnDepNode.findPlug("b");
 				deformerPlug = deformerPlug.elementByLogicalIndex(vertId);
 				deformerPlug.setValue( b );
-				
+
 				// This is an alternate method for determining "b".  This method produces better
-				// results when scaling the mesh. 
+				// results when scaling the mesh.
 				for(int j = 0; j < polarCoordsArray.size(); j++){
 					if(polarCoordsArray.size() > MAX_NUM_CONN_VRTS){
 						MGlobal::executeCommand( "error \"stretchMesh currently only supports meshes with 32 or fewer connected vertices per vertex\"" );
 						return MStatus::kFailure;
 					}
-					// To represent the normal component of vi with respect to the local frame, we 
-					// calculate the signed cosine of the angle between each edge incident to vi and the 
-					// normal 
+					// To represent the normal component of vi with respect to the local frame, we
+					// calculate the signed cosine of the angle between each edge incident to vi and the
+					// normal
 					connVrtPt = inputPts[polarCoordsArray[j].vertID];
 					MVector connPtToCurrPt;
 					connPtToCurrPt = (currVrtPos - connVrtPt);
-					
+
 					double cos = (connPtToCurrPt * nrml)/connPtToCurrPt.length();
 					double bScales = (cos)/(sqrt(1 - (cos*cos)));
 					deformerPlug = deformerFnDepNode.findPlug("bScalableList");
@@ -686,12 +686,12 @@ MStatus stretchMeshCmd::redoIt()
 					deformerPlug = deformerPlug.child(0);
 					deformerPlug = deformerPlug.elementByLogicalIndex( j );
 					deformerPlug.setValue( bScales );
-					
+
 				}
-				
-				
+
+
 				deformerPlug = deformerFnDepNode.findPlug("stiffnessList");
-				// "stiffnessList" is a compound attribute that has children that correspond to the 
+				// "stiffnessList" is a compound attribute that has children that correspond to the
 				// individual vert stiffness values.  It must be a compound attribute in order to support
 				// weight painting.
 				deformerPlug = deformerPlug.elementByLogicalIndex(0);
@@ -735,8 +735,8 @@ MStatus stretchMeshCmd::redoIt()
 					degenerateVertIds.append(currVrtId);
 				}
 			}
-			
-			
+
+
 			//Turn off the deformer again while we modify the actual stiffness values: optimization
 			deformerPlug = deformerFnDepNode.findPlug("nodeState");
 			deformerPlug.setValue( 1 );
@@ -748,23 +748,23 @@ MStatus stretchMeshCmd::redoIt()
 				deformerPlug = deformerPlug.elementByLogicalIndex(degenerateVertIds[degenItr]);
 				deformerPlug.setValue( 1.0 );
 			}
-			
+
 			if(stiffnessWarning){
 				MGlobal::displayWarning("Warning: StretchMesh stiffness has been set to 1.0 for one or more vertices.  See documentation for details.");
 				MGlobal::setActiveSelectionList(degenerateVertList);
 			}
-			
-			// Last thing we need to do: set the iterations step to something reasonable.  It defaults to zero so the deformer 
+
+			// Last thing we need to do: set the iterations step to something reasonable.  It defaults to zero so the deformer
 			// isn't trying to evaluate itself during the initialization procedure above:
 			deformerPlug = deformerFnDepNode.findPlug("iterations");
 			deformerPlug.setValue( iterationFlag );
-			
+
 			deformerPlug = deformerFnDepNode.findPlug("collisionStep");
 			deformerPlug.setValue( collisionStepFlag );
-			
+
 			deformerPlug = deformerFnDepNode.findPlug("collisions");
 			deformerPlug.setValue( collisionFlag );
-			
+
 			deformerPlug = deformerFnDepNode.findPlug("enableScaleSafe");
 			deformerPlug.setValue( scaleSafeFlag );
 
@@ -772,7 +772,7 @@ MStatus stretchMeshCmd::redoIt()
 			if(addColliderFlagSet){
 				addCollider();
 			}
-			
+
 			// add attractors
 			if(addAttractorFlagSet){
 				addAttractor();
@@ -782,9 +782,9 @@ MStatus stretchMeshCmd::redoIt()
 			deformerPlug.setValue( 0 );
 		}
 	}
-		
+
 	dgModifier.doIt();
-	setResult( melResult ); 
+	setResult( melResult );
 	return MS::kSuccess;
 }
 
@@ -801,12 +801,12 @@ MStatus stretchMeshCmd::undoIt()
 			stretchMeshPlug = deformerFnDepNode.findPlug("collisionStep");
 			stretchMeshPlug.setValue( collisionStepOrig );
 		}
-		
+
 		if(iterationFlagSet){
 			stretchMeshPlug = deformerFnDepNode.findPlug("iterations");
 			stretchMeshPlug.setValue( iterationOrig );
 		}
-		
+
 		if(stiffnessFlagSet){
 			// set the stiffness values to original values
 			for(int itr = 0; itr < stiffnessOrigArray.length(); itr++){
@@ -817,16 +817,16 @@ MStatus stretchMeshCmd::undoIt()
 				stretchMeshPlug.setValue( stiffnessOrigArray[itr] );
 			}
 		}
-		
+
 		if(collisionFlagSet){
 			stretchMeshPlug = deformerFnDepNode.findPlug("collisions");
 			stretchMeshPlug.setValue( collisionsOrig );
 		}
-		
+
 		if(addColliderFlagSet){
 			dgModifier.undoIt();
 		}
-		
+
 		if(addAttractorFlagSet){
 			dgModifier.undoIt();
 		}
@@ -835,14 +835,14 @@ MStatus stretchMeshCmd::undoIt()
 			stretchMeshPlug = deformerFnDepNode.findPlug("enableScaleSafe");
 			stretchMeshPlug.setValue( scaleSafeOrig );
 		}
-		
+
 	}else{
 		// ...otherwise, delete any stretchMesh nodes that were created.
 		for(int i = 0; i < stretchMeshesCreated.length(); i++){
 			MGlobal::executeCommand("delete " + stretchMeshesCreated[i]);
 		}
 	}
-	
+
 	return MS::kSuccess;
 }
 
@@ -851,7 +851,7 @@ bool stretchMeshCmd::isUndoable() const
 // Description
 //     Make the command eligable for undo.
 //
-{ 
+{
 	return true;
 }
 
@@ -866,7 +866,7 @@ bool stretchMeshCmd::getConnectedVerts(MItMeshVertex& meshIter, MIntArray& connV
 		int prevIndex;
 		meshIter.setIndex(connVertsDup[connVertsIter], prevIndex);
 		meshIter.getConnectedVertices(scndDegreeConnVerts);
-		
+
 		for(int vertIter = 0; vertIter < scndDegreeConnVerts.length(); vertIter++){
 //			MGlobal::displayInfo(MString("Hello!"));
 			//first, check that this vert isn't already in the connVertsArray
@@ -876,13 +876,13 @@ bool stretchMeshCmd::getConnectedVerts(MItMeshVertex& meshIter, MIntArray& connV
 					vertIdIsDuplicate=true;
 				}
 			}
-			
+
 			if(scndDegreeConnVerts[vertIter] != currVertIndex && !vertIdIsDuplicate){
 				connVerts.append(scndDegreeConnVerts[vertIter]);
 			}
 		}
 	}
-	
+
 /*	// iterate through the connected verts array and only add non-duplicate verts
 	connVertsDup = connVerts;
 	MIntArray	connVertsResult = connVerts;
@@ -895,23 +895,23 @@ bool stretchMeshCmd::getConnectedVerts(MItMeshVertex& meshIter, MIntArray& connV
 			}
 		}
 	}
-	
+
 	//bubble sort the verIDsToRemove array
 	bubbleSort(vertIDsToRemove);
 //	bubbleSort(connVertsResult);
-	
+
 	for(int i=0; i<vertIDsToRemove.length(); i++){
 		MGlobal::displayInfo(MString("\tvert id to remove") + (vertIDsToRemove[i]-i));
 		connVertsResult.remove(vertIDsToRemove[i]-i);
 	}
-	
+
 	connVerts = connVertsResult;
-*/	
+*/
 	return true;
 }
 
-			
-			
+
+
 bool stretchMeshCmd::bubbleSort(MIntArray& vertsToRemove)
 {
 	bool swapped;
@@ -931,7 +931,7 @@ bool stretchMeshCmd::bubbleSort(MIntArray& vertsToRemove)
 	return true;
 }
 
-			
+
 /*procedure bubbleSort( A : list of sortable items ) defined as:
 do
 			swapped := false
@@ -943,9 +943,9 @@ do
 			end for
 while swapped
 end procedure
-*/			
-			
- 
+*/
+
+
 MVector stretchMeshCmd::getCurrNormal(MPointArray& inputPts, MIntArray& connVerts)
 {
 	// Compute the average position of all the connected verts (the "l" term in the paper)
@@ -958,7 +958,7 @@ MVector stretchMeshCmd::getCurrNormal(MPointArray& inputPts, MIntArray& connVert
 	MPoint pt;
 	MPoint pt_1;
 	MPoint pt_2;
-	
+
 	for(unsigned int i = 0; i <  connVerts.length(); i++){
 		pt = inputPts[connVerts[i]];
 		vrtAvg.x = vrtAvg.x + pt.x;
@@ -968,28 +968,28 @@ MVector stretchMeshCmd::getCurrNormal(MPointArray& inputPts, MIntArray& connVert
 	vrtAvg.x = vrtAvg.x/connVerts.length();
 	vrtAvg.y = vrtAvg.y/connVerts.length();
 	vrtAvg.z = vrtAvg.z/connVerts.length();
-	
+
 	// next, we need to sum the cross products between adjacent verts and the vrt_avg
 	for(unsigned int i = 0; i <  connVerts.length(); i++){
 		pt_1 = inputPts[connVerts[(i+1)%connVerts.length()]];
-		vec_1.x = pt_1.x; vec_1.y = pt_1.y; vec_1.z = pt_1.z; 
+		vec_1.x = pt_1.x; vec_1.y = pt_1.y; vec_1.z = pt_1.z;
 
 		pt_2 = inputPts[connVerts[i]];
-		vec_2.x = pt_2.x; vec_2.y = pt_2.y; vec_2.z = pt_2.z; 
+		vec_2.x = pt_2.x; vec_2.y = pt_2.y; vec_2.z = pt_2.z;
 		cross = vec_1^vec_2;
 		cross_sum = cross_sum + cross;
 	}
-	
+
 	cross_sum.normalize();
 	return cross_sum;
-}	
+}
 
 MVector stretchMeshCmd::projectVrtToPlane(MVector vrt, MVector nrml, double d)
 {
 	// Using the algorithm described in the paper...
 	double x;
 	MVector vrtProj;
-	
+
 	x = d + (vrt*nrml);
 	vrtProj = x*nrml;
 	vrtProj = vrt - vrtProj;
@@ -1020,7 +1020,7 @@ bool stretchMeshCmd::addCollider()
 	MPlug colliderMeshPlugArray = colliderDepNode.findPlug("worldMesh");
 	// The world mesh we're interested in is the first element of the list
 	MPlug colliderMeshPlug = colliderMeshPlugArray.elementByLogicalIndex(0);
-	
+
 	// get the plug representing the stretchMesh mshCollider attribute
 	MPlug stretchMeshColliderPlugArray = deformerFnDepNode.findPlug("mshCollider");
 	MPlug stretchMeshColliderPlug;
@@ -1035,11 +1035,11 @@ bool stretchMeshCmd::addCollider()
 			continue;
 		}
 		itr++;
-	}			
-	
-	// Connect the attributes 
+	}
+
+	// Connect the attributes
 	dgModifier.connect(colliderMeshPlug, stretchMeshColliderPlug);
-	
+
 	return true;
 }
 
@@ -1051,7 +1051,7 @@ bool stretchMeshCmd::addCurveCollider()
 	MStatus status;
 	int numShapes;
 	MFnNurbsCurve cColliderFn;
-	
+
 	// Make sure the collider exists first:
 	MCommandResult cmdResult;
 	int colliderExists;
@@ -1061,7 +1061,7 @@ bool stretchMeshCmd::addCurveCollider()
 		MGlobal::displayError("Specified collider curve does not exist");
 		return false;
 	}
-	
+
 	// Get the curves dependency node
 	MSelectionList selList;
 	selList.clear();
@@ -1070,24 +1070,24 @@ bool stretchMeshCmd::addCurveCollider()
 	selList.getDagPath(0, curveColliderPath);
 	MFnDependencyNode curveColliderDepNode;
 	curveColliderDepNode.setObject(curveColliderPath.node());
-	
+
 	// Add the colliderMult attribute to the curve if it hasn't already been added
 	if(!curveColliderDepNode.hasAttribute("colliderMult")){
 		dgModifier.commandToExecute("addAttr -ln \"colliderMult\"  -at double  -min 0 -max 1 -dv 1 -keyable true " + addCurveColliderFlag);
 		dgModifier.doIt();
 	}
-	
+
 	MDagPath crvShapePath;
 	MStringArray crvShapesResult;
 	MGlobal::executeCommand( MString("listRelatives -pa -shapes -ni ") + curveColliderPath.fullPathName(), crvShapesResult);
 	numShapes = crvShapesResult.length();
 	MSelectionList shapesList;
-	
+
 	for(unsigned int i = 0; i < numShapes; i++){
 		shapesList.clear();
 		shapesList.add(crvShapesResult[i]);
 		shapesList.getDagPath(0, crvShapePath);
-		
+
 		if(crvShapePath.apiType() != MFn::kNurbsCurve){
 			MGlobal::displayError("Must supply a nurbs curve as a curve collider.");
 			continue;
@@ -1098,19 +1098,19 @@ bool stretchMeshCmd::addCurveCollider()
 	MPlug curveColliderXformPlugArray = curveColliderShapeDepNode.findPlug("worldMatrix");
 	// The world xform we're interested in is the first element of the list
 	MPlug curveColliderXformPlug = curveColliderXformPlugArray.elementByLogicalIndex(0);
-	
-	
+
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////    connect curve's "worldspace[0]" to stretchMesh's first available "primCrvCollider" attr
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	MPlug colliderCurvePlugArray = curveColliderShapeDepNode.findPlug("worldSpace");
 	// The world curve we're interested in is the first element of the list
 	MPlug colliderCurvePlug = colliderCurvePlugArray.elementByLogicalIndex(0);
-	
+
 	// get the plug representing the stretchMesh curve and strength attribute
 	MPlug stretchMeshCurveColliderPlugArray = deformerFnDepNode.findPlug("primCrvCollider");
 	MPlug stretchMeshCurveColliderPlug;
-	
+
 	// Find the first unconnected element of this array plug, use that to connect
 	int crvItr = 0;
 	bool foundElement = false;
@@ -1122,17 +1122,17 @@ bool stretchMeshCmd::addCurveCollider()
 			continue;
 		}
 		crvItr++;
-	}			
-	// Connect the curve attribute 
+	}
+	// Connect the curve attribute
 	dgModifier.connect(colliderCurvePlug, stretchMeshCurveColliderPlug);
-	
+
 
 	// Connect the collider mult attribute using the same collider index found above
 	MPlug stretchMeshCurveColliderMultArray = deformerFnDepNode.findPlug("crvColliderMult");
 	MPlug stretchMeshCurveColliderMult = stretchMeshCurveColliderMultArray.elementByLogicalIndex(curveColliderIndex);
 	MPlug colliderMultPlug = curveColliderDepNode.findPlug("colliderMult");
-	dgModifier.connect(colliderMultPlug, stretchMeshCurveColliderMult);	
-	
+	dgModifier.connect(colliderMultPlug, stretchMeshCurveColliderMult);
+
 	// now we need to find the first unconnected matrix plug (might not be the same index
 	// as the curve attributes because there could be point attractors)
 	MPlug stretchMeshMatrixPlugArray = deformerFnDepNode.findPlug("matrix");
@@ -1146,11 +1146,11 @@ bool stretchMeshCmd::addCurveCollider()
 			continue;
 		}
 		itr++;
-	}			
-	// Connect the matrix attribute 
+	}
+	// Connect the matrix attribute
 	dgModifier.connect(curveColliderXformPlug, stretchMeshMatrixPlug);
-	
-	// Create the collider locator, initialize its radius values according to the number of spans on the curve, 
+
+	// Create the collider locator, initialize its radius values according to the number of spans on the curve,
 	// and connect those radius attributes to the corresponding radius attributes on the stretchMesh deformer node
 	MStringArray crvColliderResult;
 	MGlobal::executeCommand( MString("createNode curveColliderLocator "), crvColliderResult);
@@ -1174,9 +1174,9 @@ bool stretchMeshCmd::addCurveCollider()
 		MPlug smRadiusPlug = smRadiusArrayPlug.elementByLogicalIndex(curveColliderIndex);
 		smRadiusPlug = smRadiusPlug.child(0);
 		smRadiusPlug = smRadiusPlug.elementByLogicalIndex(radiusItr);
-		dgModifier.connect(locatorRadiusPlug, smRadiusPlug);	
+		dgModifier.connect(locatorRadiusPlug, smRadiusPlug);
 	}
-	
+
 	//We need to initialize the collider per-vertex mults to one,
 	MPlug smBPlug = deformerFnDepNode.findPlug("b");
 	int numVerts = smBPlug.numElements();
@@ -1188,7 +1188,7 @@ bool stretchMeshCmd::addCurveCollider()
 		smColliderMultPlug = smColliderMultPlug.elementByLogicalIndex(curveColliderIndex);
 		smColliderMultPlug.setValue(1.0);
 	}
-	
+
 	return true;
 }
 
@@ -1207,7 +1207,7 @@ bool stretchMeshCmd::addSphereCollider()
 		MGlobal::displayError("Specified collider transform does not exist");
 		return false;
 	}
-	
+
 	// Get the sphere collider's dependency node
 	MSelectionList selList;
 	selList.clear();
@@ -1216,14 +1216,14 @@ bool stretchMeshCmd::addSphereCollider()
 	selList.getDagPath(0, sphereColliderPath);
 	MFnDependencyNode sphereColliderDepNode;
 	sphereColliderDepNode.setObject(sphereColliderPath.node());
-	
+
 	// Add the colliderMult attribute to the curve if it hasn't already been added
 	if(!sphereColliderDepNode.hasAttribute("colliderMult")){
 		dgModifier.commandToExecute("addAttr -ln \"colliderMult\"  -at double  -min 0 -max 1 -dv 1 -keyable true " + addSphereColliderFlag);
 		dgModifier.doIt();
 	}
-	
-	
+
+
 	//  connect locator's worldMatrix[0] to sm node's primSphrCollider[colliderIndex]
 	MPlug stretchMeshSphereColliderPlugArray = deformerFnDepNode.findPlug("primSphrCollider");
 	MPlug stretchMeshSphereColliderPlug;
@@ -1238,22 +1238,22 @@ bool stretchMeshCmd::addSphereCollider()
 			continue;
 		}
 		sphrItr++;
-	}			
+	}
 	MPlug sphereColliderXformPlug = sphereColliderDepNode.findPlug("worldMatrix");
 	sphereColliderXformPlug = sphereColliderXformPlug.elementByLogicalIndex(0);
 	dgModifier.connect(sphereColliderXformPlug, stretchMeshSphereColliderPlug);
 
-	
-	
+
+
 	//  connect locator's colliderMult to sm node's primSphrColliderMult[colliderIndex]
 	MPlug colliderMultPlug = sphereColliderDepNode.findPlug("colliderMult");
 	MPlug smColliderMultPlug = deformerFnDepNode.findPlug("primSphrColliderMult");
 	smColliderMultPlug = smColliderMultPlug.elementByLogicalIndex(sphereColliderIndex);
 	dgModifier.connect(colliderMultPlug, smColliderMultPlug);
-	
-	
-	// connect locator's worldMatrix[0] to sm node's matrix[] attribute.  Note: the matrix[] index we 
-	// connect to might be different than the colliderIndex above because there might be other 
+
+
+	// connect locator's worldMatrix[0] to sm node's matrix[] attribute.  Note: the matrix[] index we
+	// connect to might be different than the colliderIndex above because there might be other
 	// colliders attached.
 	MPlug stretchMeshMatrixPlugArray = deformerFnDepNode.findPlug("matrix");
 	MPlug stretchMeshMatrixPlug;
@@ -1266,12 +1266,12 @@ bool stretchMeshCmd::addSphereCollider()
 			continue;
 		}
 		itr++;
-	}			
-	// Connect the matrix attribute 
+	}
+	// Connect the matrix attribute
 	dgModifier.connect(sphereColliderXformPlug, stretchMeshMatrixPlug);
-	
-	
-	
+
+
+
 	//We need to initialize the collider per-vertex mults to one...
 	MPlug smBPlug = deformerFnDepNode.findPlug("b");  // hack to determine the number of verts on the sm geo
 	int numVerts = smBPlug.numElements();
@@ -1283,8 +1283,8 @@ bool stretchMeshCmd::addSphereCollider()
 		smColliderMultPlug = smColliderMultPlug.elementByLogicalIndex(sphereColliderIndex);
 		smColliderMultPlug.setValue(1.0);
 	}
-	
-	
+
+
 	return true;
 }
 
@@ -1301,7 +1301,7 @@ bool stretchMeshCmd::addAttractor()
 		MGlobal::displayError("Specified attractor does not exist");
 		return false;
 	}
-	
+
 	// Get the plug representing the attractor xform output
 	MSelectionList selList;
 	selList.clear();
@@ -1317,13 +1317,13 @@ bool stretchMeshCmd::addAttractor()
 	MPlug attractorLocatorPlugArray = attractorDepNode.findPlug("worldMatrix");
 	// The world xform we're interested in is the first element of the list
 	MPlug attractorLocatorPlug = attractorLocatorPlugArray.elementByLogicalIndex(0);
-	
+
 	// Add the attractor strength attribute to the locator if it hasn't already been added
 	if(!attractorDepNode.hasAttribute("attractorStrength")){
 	   dgModifier.commandToExecute("addAttr -ln \"attractorStrength\"  -at double  -min 0 -max 1 -dv 0 -keyable true " + addAttractorFlag);
 	   dgModifier.doIt();
 	}
-	   
+
 	// get the plug representing the stretchMesh matrix attribute
 	MPlug stretchMeshAttractorPlugArray = deformerFnDepNode.findPlug("matrix");
 	MPlug stretchMeshAttractorPlug;
@@ -1340,17 +1340,17 @@ bool stretchMeshCmd::addAttractor()
 			continue;
 		}
 		itr++;
-	}			
-	
-	// Connect the xform attribute 
+	}
+
+	// Connect the xform attribute
 	dgModifier.connect(attractorLocatorPlug, stretchMeshAttractorPlug);
-	
+
 	// Connect the attractor strength attribute
 	MPlug attractorStrengthPlug = attractorDepNode.findPlug("attractorStrength");
 	dgModifier.connect(attractorStrengthPlug, stretchMeshStrengthPlug);
 
 	return true;
-	
+
 }
 
 bool stretchMeshCmd::addCurveAttractor()
@@ -1359,7 +1359,7 @@ bool stretchMeshCmd::addCurveAttractor()
 	MFnNurbsCurve cAttractorFn;
 	MStatus status;
 	int numShapes;
-	
+
 	// Make sure the attractor exists first:
 	MCommandResult cmdResult;
 	int attractorExists;
@@ -1369,7 +1369,7 @@ bool stretchMeshCmd::addCurveAttractor()
 		MGlobal::displayError("Specified attractor curve does not exist");
 		return false;
 	}
-	
+
 	// Get the plug representing the attractor xform output
 	MSelectionList selList;
 	selList.clear();
@@ -1383,18 +1383,18 @@ bool stretchMeshCmd::addCurveAttractor()
 	MPlug curveAttractorXformPlugArray = curveAttractorDepNode.findPlug("worldMatrix");
 	// The world xform we're interested in is the first element of the list
 	MPlug curveAttractorXformPlug = curveAttractorXformPlugArray.elementByLogicalIndex(0);
-	
+
 	MDagPath crvShapePath;
 	MStringArray crvShapesResult;
 	MGlobal::executeCommand( MString("listRelatives -pa -shapes -ni ") + curveAttractorPath.fullPathName(), crvShapesResult);
 	numShapes = crvShapesResult.length();
 	MSelectionList shapesList;
-	
+
 	for(unsigned int i = 0; i < numShapes; i++){
 		shapesList.clear();
 		shapesList.add(crvShapesResult[i]);
 		shapesList.getDagPath(0, crvShapePath);
-		
+
 		if(crvShapePath.apiType() != MFn::kNurbsCurve){
 			MGlobal::displayError("Must supply a nurbs curve as a curve attractor.");
 			continue;
@@ -1406,13 +1406,13 @@ bool stretchMeshCmd::addCurveAttractor()
 	MPlug attractorCurvePlugArray = curveAttractorShapeDepNode.findPlug("worldSpace");
 	// The world curve we're interested in is the first element of the list
 	MPlug attractorCurvePlug = attractorCurvePlugArray.elementByLogicalIndex(0);
-	
+
 	// Add the attractor strength attribute to the curve if it hasn't already been added
 	if(!curveAttractorDepNode.hasAttribute("attractorStrength")){
 		dgModifier.commandToExecute("addAttr -ln \"attractorStrength\"  -at double  -min 0 -max 1 -dv 0 -keyable true " + addCurveAttractorFlag);
 		dgModifier.doIt();
 	}
-	
+
 	// get the plug representing the stretchMesh curve and strength attribute
 	MPlug stretchMeshCurveAttractorPlugArray = deformerFnDepNode.findPlug("crvAttrctrCurve");
 	MPlug stretchMeshCurveAttractorPlug;
@@ -1420,7 +1420,7 @@ bool stretchMeshCmd::addCurveAttractor()
 	MPlug stretchMeshStrengthPlug;
 	MPlug stretchMeshMatrixPlugArray = deformerFnDepNode.findPlug("matrix");
 	MPlug stretchMeshMatrixPlug;
-	
+
 	// Find the first unconnected element of this array plug, use that to connect
 	int crvItr = 0;
 	bool foundElement = false;
@@ -1432,14 +1432,14 @@ bool stretchMeshCmd::addCurveAttractor()
 			continue;
 		}
 		crvItr++;
-	}			
-	// Connect the curve attribute 
+	}
+	// Connect the curve attribute
 	dgModifier.connect(attractorCurvePlug, stretchMeshCurveAttractorPlug);
-	
+
 	// Connect the attractor strength attribute
 	MPlug attractorStrengthPlug = curveAttractorDepNode.findPlug("attractorStrength");
 	dgModifier.connect(attractorStrengthPlug, stretchMeshStrengthPlug);
-	
+
 	// now we need to find the first unconnected matrix plug (might not be the same index
 	// as the curve attributes because there could be point attractors)
 	int itr = 0;
@@ -1451,18 +1451,18 @@ bool stretchMeshCmd::addCurveAttractor()
 			continue;
 		}
 		itr++;
-	}			
-	// Connect the matrix attribute 
+	}
+	// Connect the matrix attribute
 	dgModifier.connect(curveAttractorXformPlug, stretchMeshMatrixPlug);
 
-	
+
 	// Find the closest point on the curve for each vertex, populate the array attribute representing
 	// these UVs
 	if(selected.length() != 1){
 		MGlobal::displayError("Must specify a single mesh to add the curve attractor to.");
 		return false;
 	}
-	
+
 	MDagPath stretchMeshPath;
 	MStringArray shapesResult;
 	MStringArray selectionStrings;
@@ -1474,17 +1474,17 @@ bool stretchMeshCmd::addCurveAttractor()
 
 	MGlobal::executeCommand( MString("listConnections -shapes on ") + selectionStrings[0] + MString(".outputGeometry[0]"), shapesResult);
 	numShapes = shapesResult.length();
-	
+
 	for(unsigned int i = 0; i < numShapes; i++){
 		shapesList.clear();
 		shapesList.add(shapesResult[i]);
 		shapesList.getDagPath(0, stretchMeshPath);
-		
+
 		if(!stretchMeshPath.hasFn(MFn::kMesh)){
 			MGlobal::displayError("StretchMesh must be applied to a polygonal mesh");
 			continue;
 		}
-		// Populate an array with the input point positions 
+		// Populate an array with the input point positions
 		MItMeshVertex vertIter( stretchMeshPath );
 		int vertCount = vertIter.count();
 		inputPts.clear();
@@ -1505,7 +1505,7 @@ bool stretchMeshCmd::addCurveAttractor()
 				MGlobal::displayInfo(MString("Error getting closest point... ") + status.errorString());
 				status.perror("Couldn't get closest point: ");
 			}
-																
+
 			MPlug crvAttachUVList = deformerFnDepNode.findPlug("crvAttrctrAttchUVList");
 			MPlug crvAttachUVVert = crvAttachUVList.elementByLogicalIndex(vertIndex, &status);
 			MPlug crvAttachUV;
@@ -1514,18 +1514,18 @@ bool stretchMeshCmd::addCurveAttractor()
 			crvAttachUVIndex.setValue(param);
 		}
 	}
-	
+
 	return true;
-	
+
 }
 
 MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 {
 	MString buildMenuCmd;
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
-	// Build Menu 
+	// Build Menu
 	// using -da 1 to let us know these menuItems are part of SM
 	// future menu items can decide how to remove/manipulate this
 	//
@@ -1557,9 +1557,9 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "menuItem -d true;\n";
 	buildMenuCmd += "menuItem -p $stretchMeshCmdMenuCtrl -da 1 -l \"Display MAC Address\" -c (\"ksLicenseRequest()\");\n";
 	buildMenuCmd += "menuItem -p $stretchMeshCmdMenuCtrl -da 1 -l \"Help\" -c (\"stretchMeshHelpLaunch()\");\n";
-	
+
 	buildMenuCmd += "}\n";
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// Remove Menu
@@ -1587,7 +1587,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "{\n";
 	buildMenuCmd += "	showHelp -absolute \"http://kickstandlabs.com/tools/stretchmesh/doc\";\n";
 	buildMenuCmd += "}\n";
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// StretchMeshOptions... builds the stretchMesh option UI
@@ -1602,7 +1602,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		global string $stretchMeshCollisionsUI;\n";
 	buildMenuCmd += "		global string $stretchMeshScaleSafeUI;\n";
 
-	
+
 	buildMenuCmd += "		$stretchMeshOptionsWindow = `window -title \"Create StretchMesh Options\"\n";
 	buildMenuCmd += "		-iconName \"StretchMesh\"\n";
 	buildMenuCmd += "		-widthHeight 300 300`;\n";
@@ -1625,27 +1625,27 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		$stretchMeshScaleSafeUI = `checkBoxGrp -numberOfCheckBoxes 1\n";
 	buildMenuCmd += "		-label \"Enable Scale Safe \" \n";
 	buildMenuCmd += "		-value1 true`;\n";
-	
+
 	buildMenuCmd += "		formLayout -edit\n";
 	buildMenuCmd += "		 -attachNone     $b1     \"top\"\n";
 	buildMenuCmd += "		-attachForm     $b1     \"left\"   5\n";
 	buildMenuCmd += "		-attachForm     $b1     \"bottom\" 5 \n";
 	buildMenuCmd += "		-attachPosition $b1     \"right\"  5 50\n";
-	
+
 	buildMenuCmd += "		-attachNone     $b2     \"top\"\n";
 	buildMenuCmd += "		-attachPosition $b2     \"left\"  0 50\n";
 	buildMenuCmd += "		-attachForm     $b2     \"bottom\" 5 \n";
 	buildMenuCmd += "		-attachForm $b2     \"right\"  5\n";
-	
+
 	buildMenuCmd += "		-attachForm     $column \"top\"    15\n";
 	buildMenuCmd += "		-attachForm     $column \"left\"   5\n";
 	buildMenuCmd += "		-attachForm     $column \"right\" 5 \n";
 	buildMenuCmd += "		-attachNone     $column \"bottom\"  \n";
 	buildMenuCmd += "		$form;\n";
-	
+
 	buildMenuCmd += "		showWindow $stretchMeshOptionsWindow;\n";
 	buildMenuCmd += "}\n";
-	
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -1658,7 +1658,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "	string $selected[] = `ls -sl -fl`;\n";
 	buildMenuCmd += "	string $stretchMeshCmdDfrmr;\n";
 	buildMenuCmd += "	int $numColliders;\n";
-	
+
 	buildMenuCmd += "	if (`size $selected` != 2){\n";
 	buildMenuCmd += "		error \"Select the stretchMeshCmd geometry and the collision transform\";\n";
 	buildMenuCmd += "		return;\n";
@@ -1670,7 +1670,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			$stretchMeshCmdDfrmr = $history[$i];\n";
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
-	
+
 	// Temporarily disable the stretchMesh node so it isn't calculating as we go
 	buildMenuCmd += "	setAttr (($stretchMeshCmdDfrmr + \".nodeState\"), 1);\n";
 
@@ -1678,7 +1678,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		error \"Select the stretchMeshCmd geometry and the collision transform\";\n";
 	buildMenuCmd += "		return;\n";
 	buildMenuCmd += "	}\n";
-	
+
 	// Next, determine the shape node of the second selected object
 	buildMenuCmd += "	string $history[] = `listHistory($selected[1])`;\n";
 	buildMenuCmd += "	for($i = 0; $i < `size($history)`; $i++){\n";
@@ -1686,7 +1686,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		if(`nodeType($history[$i])` == \"mesh\"){\n";
 	buildMenuCmd += "			$shapeNode = $history[$i];\n";
 	buildMenuCmd += "			$numColliders = `getAttr -size ($stretchMeshCmdDfrmr + \".mshCollider\")`;\n";
-			//search through existing .mshCollider attrs looking for an unconnected attr, use it if we 
+			//search through existing .mshCollider attrs looking for an unconnected attr, use it if we
 			//find one (this prevents buildup of attrs if we repeatedly create and delete colliders).
 	buildMenuCmd += "			int $madeConnection = 0;\n";
 	buildMenuCmd += "			for($j = 0; $j < $numColliders; $j++){\n";
@@ -1698,15 +1698,15 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "					break;\n";
 	buildMenuCmd += "				}\n";
 	buildMenuCmd += "			}\n";
-			
+
 			//if we didn't find an existing unconnected attr, connect it to a new attribute
 	buildMenuCmd += "			if( !$madeConnection ){\n";
 	buildMenuCmd += "				connectAttr -f ($shapeNode + \".worldMesh[0]\") ($stretchMeshCmdDfrmr + \".mshCollider[\" + $numColliders + \"]\");\n";
 				//set the corresponding pad attribute
 	buildMenuCmd += "				setAttr ($stretchMeshCmdDfrmr + \".mshColliderPad[\" + $numColliders + \"]\") 0;\n";
 	buildMenuCmd += "			}\n";
-	// We search the existing matrix array elements for one that is not connected. 
-	// if we find it, we connect our new attractor to that element. 
+	// We search the existing matrix array elements for one that is not connected.
+	// if we find it, we connect our new attractor to that element.
 	// otherwise, we connect it at a new element
 	buildMenuCmd += "			$numColliders = `getAttr -size ($stretchMeshCmdDfrmr + \".matrix\")`;\n";
 	buildMenuCmd += "			int $emptyElement = $numColliders;\n";
@@ -1716,11 +1716,11 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "					break;\n";
 	buildMenuCmd += "				}\n";
 	buildMenuCmd += "			}\n";
-	buildMenuCmd += "			connectAttr(($shapeNode + \".worldMatrix[0]\"), ($stretchMeshCmdDfrmr + \".matrix[\" + $emptyElement + \"]\"));\n";	
+	buildMenuCmd += "			connectAttr(($shapeNode + \".worldMatrix[0]\"), ($stretchMeshCmdDfrmr + \".matrix[\" + $emptyElement + \"]\"));\n";
 	buildMenuCmd += "		}else if(`nodeType($history[$i])` == \"nurbsSurface\"){\n";
 	buildMenuCmd += "			$shapeNode = $history[$i];\n";
 	buildMenuCmd += "			$numColliders = `getAttr -size ($stretchMeshCmdDfrmr + \".nrbsCollider\")`;\n";
-			//search through existing .mshCollider attrs looking for an unconnected attr, use it if we 
+			//search through existing .mshCollider attrs looking for an unconnected attr, use it if we
 			//find one (this prevents buildup of attrs if we repeatedly create and delete colliders).
 	buildMenuCmd += "			int $madeConnection = 0;\n";
 	buildMenuCmd += "			for($j = 0; $j < $numColliders; $j++){\n";
@@ -1730,7 +1730,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "					break;\n";
 	buildMenuCmd += "				}\n";
 	buildMenuCmd += "			}\n";
-			
+
 			//if we didn't find an existing unconnected attr, connect it to a new attribute
 	buildMenuCmd += "			if( !$madeConnection ){\n";
 	buildMenuCmd += "				connectAttr -f ($shapeNode + \".worldSpace[0]\") ($stretchMeshCmdDfrmr + \".nrbsCollider[\" + $numColliders + \"]\");\n";
@@ -1738,9 +1738,9 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
 
-	
+
 	buildMenuCmd += "	addAttr -ln \"colliderMult\"  -at double  -min 0 -max 1 -dv 1 -keyable true $selected[1];\n";
-	
+
 	// Search for unconnected mshColliderMult attribute
 	buildMenuCmd += "	int $numColliderMults = `getAttr -size ($stretchMeshCmdDfrmr + \".mshColliderMult\")`;\n";
 	buildMenuCmd += "	int $emptyMshCollider = $numColliderMults;\n";
@@ -1751,17 +1751,17 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
 	buildMenuCmd += "	connectAttr (($selected[1] + \".colliderMult\"), ($stretchMeshCmdDfrmr + \".mshColliderMult[\" + $emptyMshCollider + \"]\"));\n";
-	
+
 	//We need to initialize the collider per-vertex mults to one,
 	buildMenuCmd += "	int $numVerts[];\n";
 	buildMenuCmd += "	$numVerts = `polyEvaluate -vertex $selected[0]`;\n";
 	buildMenuCmd += "	for($i = 0; $i < $numVerts[0]; $i++){\n";
-	buildMenuCmd += "		setAttr(($stretchMeshCmdDfrmr + \".mshColliderVrtMultList[\" + $i + \"].mshColliderVrtMult[\" + $emptyMshCollider + \"]\"), 1.0);\n";	
-	buildMenuCmd += "	}\n";	
+	buildMenuCmd += "		setAttr(($stretchMeshCmdDfrmr + \".mshColliderVrtMultList[\" + $i + \"].mshColliderVrtMult[\" + $emptyMshCollider + \"]\"), 1.0);\n";
+	buildMenuCmd += "	}\n";
 	// Enable the stretchMeshCmd now that we're done
 	buildMenuCmd += "	setAttr (($stretchMeshCmdDfrmr + \".nodeState\"), 0);\n";
 	buildMenuCmd += "}\n";
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// Add curve collider
@@ -1775,7 +1775,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "	int $numColliders;\n";
 	buildMenuCmd += " int $crvColliderSpans;\n";
 	buildMenuCmd += "	string $crvColliderLoc;\n";
-	
+
 	buildMenuCmd += "	if (`size $selected` != 2){\n";
 	buildMenuCmd += "		error \"Select the stretchMeshCmd geometry and the collision transform\";\n";
 	buildMenuCmd += "		return;\n";
@@ -1787,15 +1787,15 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			$stretchMeshCmdDfrmr = $history[$i];\n";
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
-	
+
 	buildMenuCmd += "	if($stretchMeshCmdDfrmr == \"\"){\n";
 	buildMenuCmd += "		error \"Select the stretchMeshCmd geometry and the collision transform\";\n";
 	buildMenuCmd += "		return;\n";
 	buildMenuCmd += "	}\n";
-	
+
 	// Temporarily disable the stretchMesh node so it isn't calculating as we go
 	buildMenuCmd += "	setAttr (($stretchMeshCmdDfrmr + \".nodeState\"), 1);\n";
-	
+
 	// Next, determine the shape node of the second selected object
 	buildMenuCmd += "	string $history[] = `listHistory($selected[1])`;\n";
 	buildMenuCmd += "	for($i = 0; $i < `size($history)`; $i++){\n";
@@ -1805,13 +1805,13 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			$crvColliderSpans = `getAttr ($shapeNode + \".spans\")`;\n";
 	buildMenuCmd += "			$crvColliderSpans = $crvColliderSpans + 1;\n";
 	buildMenuCmd += "			$numColliders = `getAttr -size ($stretchMeshCmdDfrmr + \".primCrvCollider\")`;\n";
-	//search through existing .mshCollider attrs looking for an unconnected attr, use it if we 
+	//search through existing .mshCollider attrs looking for an unconnected attr, use it if we
 	//find one (this prevents buildup of attrs if we repeatedly create and delete colliders).
 	buildMenuCmd += "			int $madeConnection = 0;\n";
 	buildMenuCmd += "			for($j = 0; $j < $numColliders; $j++){\n";
 	buildMenuCmd += "				if( !`connectionInfo -isDestination ($stretchMeshCmdDfrmr + \".primCrvCollider[\" + $j + \"]\")`){\n";
 	buildMenuCmd += "					connectAttr -f ($shapeNode + \".worldSpace[0]\") ($stretchMeshCmdDfrmr + \".primCrvCollider[\" + $j + \"]\");\n";
-	// Plug the crve into the curve collider locator 
+	// Plug the crve into the curve collider locator
 	buildMenuCmd += "					$crvColliderLoc = `createNode curveColliderLocator`;\n";
 	buildMenuCmd += "					connectAttr -f ($shapeNode + \".worldSpace[0]\") ($crvColliderLoc + \".colliderCurve\");\n";
 	buildMenuCmd += "					int $crvItr;\n";
@@ -1822,20 +1822,20 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "					break;\n";
 	buildMenuCmd += "				}\n";
 	buildMenuCmd += "			}\n";
-	
+
 	//if we didn't find an existing unconnected attr, connect it to a new attribute
 	buildMenuCmd += "			if( !$madeConnection ){\n";
 	buildMenuCmd += "				connectAttr -f ($shapeNode + \".worldSpace[0]\") ($stretchMeshCmdDfrmr + \".primCrvCollider[\" + $numColliders + \"]\");\n";
-	// Plug the crve into the curve collider locator 
+	// Plug the crve into the curve collider locator
 	buildMenuCmd += "				$crvColliderLoc = `createNode curveColliderLocator`;\n";
 	buildMenuCmd += "				connectAttr -f ($shapeNode + \".worldSpace[0]\") ($crvColliderLoc + \".colliderCurve\");\n";
 	buildMenuCmd += "				int $crvItr;\n";
 	buildMenuCmd += "				for($crvItr = 0; $crvItr < $crvColliderSpans; $crvItr++){\n";
 	buildMenuCmd += "					setAttr ($crvColliderLoc + \".radius[\" + $crvItr + \"]\") 1.0;\n";
 	buildMenuCmd += "				}\n";
-	buildMenuCmd += "			}\n";	
-	// We search the existing matrix array elements for one that is not connected. 
-	// if we find it, we connect our new attractor to that element. 
+	buildMenuCmd += "			}\n";
+	// We search the existing matrix array elements for one that is not connected.
+	// if we find it, we connect our new attractor to that element.
 	// otherwise, we connect it at a new element
 	buildMenuCmd += "			int $numColliders = `getAttr -size ($stretchMeshCmdDfrmr + \".matrix\")`;\n";
 	buildMenuCmd += "			int $emptyElement = $numColliders;\n";
@@ -1851,7 +1851,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += " if (!`attributeExists \"colliderMult\" $selected[1]`) {\n";
 	buildMenuCmd += "		addAttr -ln \"colliderMult\"  -at double  -min 0 -max 1 -dv 1 -keyable true $selected[1];\n";
 	buildMenuCmd += "	}\n";
-	
+
 	// Search for unconnected crvColliderMult attribute
 	buildMenuCmd += "	int $numColliderMults = `getAttr -size ($stretchMeshCmdDfrmr + \".crvColliderMult\")`;\n";
 	buildMenuCmd += "	int $emptyCrvCollider = $numColliderMults;\n";
@@ -1867,18 +1867,18 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "	int $numVerts[];\n";
 	buildMenuCmd += "	$numVerts = `polyEvaluate -vertex $selected[0]`;\n";
 	buildMenuCmd += "	for($i = 0; $i < $numVerts[0]; $i++){\n";
-	buildMenuCmd += "		setAttr(($stretchMeshCmdDfrmr + \".crvColliderVrtMultList[\" + $i + \"].crvColliderVrtMult[\" + $emptyCrvCollider + \"]\"), 1.0);\n";	
-	buildMenuCmd += "	}\n";	
-	
+	buildMenuCmd += "		setAttr(($stretchMeshCmdDfrmr + \".crvColliderVrtMultList[\" + $i + \"].crvColliderVrtMult[\" + $emptyCrvCollider + \"]\"), 1.0);\n";
+	buildMenuCmd += "	}\n";
+
 	//We need to connect the crvColliderLocator radius attributes to the SM deformer
 	buildMenuCmd += "	for($crvItr = 0; $crvItr < $crvColliderSpans; $crvItr++){\n";
 	buildMenuCmd += "		connectAttr -f ($crvColliderLoc + \".radius[\" + $crvItr + \"]\") ($stretchMeshCmdDfrmr + \".crvColliderRadiusList[\" + $emptyCrvCollider + \"].crvColliderRadius[\" + $crvItr + \"]\");\n";
-	buildMenuCmd += "	}\n";	
-	
+	buildMenuCmd += "	}\n";
+
 	// Enable the stretchMeshCmd now that we're done
 	buildMenuCmd += "	setAttr (($stretchMeshCmdDfrmr + \".nodeState\"), 0);\n";
 	buildMenuCmd += "}\n";
-	
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -1891,7 +1891,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "	string $selected[] = `ls -sl -fl`;\n";
 	buildMenuCmd += "	string $stretchMeshCmdDfrmr;\n";
 	buildMenuCmd += "	int $numColliders;\n";
-	
+
 	buildMenuCmd += "	if (`size $selected` != 2){\n";
 	buildMenuCmd += "		error \"Select the stretchMeshCmd geometry and the collision transform\";\n";
 	buildMenuCmd += "		return;\n";
@@ -1903,20 +1903,20 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			$stretchMeshCmdDfrmr = $history[$i];\n";
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
-	
+
 	buildMenuCmd += "	if($stretchMeshCmdDfrmr == \"\"){\n";
 	buildMenuCmd += "		error \"Select the stretchMeshCmd geometry and the collision transform\";\n";
 	buildMenuCmd += "		return;\n";
 	buildMenuCmd += "	}\n";
-	
+
 	// Temporarily disable the stretchMesh node so it isn't calculating as we go
 	buildMenuCmd += "	setAttr (($stretchMeshCmdDfrmr + \".nodeState\"), 1);\n";
-	
+
 	// Next, determine the shape node of the second selected object
 	// collision object is a polymesh...
 	buildMenuCmd += "	if(`nodeType($selected[1])` == \"transform\"){\n";
 	buildMenuCmd += "		$numColliders = `getAttr -size ($stretchMeshCmdDfrmr + \".primSphrCollider\")`;\n";
-	//search through existing .primSphrCollider attrs looking for an unconnected attr, use it if we 
+	//search through existing .primSphrCollider attrs looking for an unconnected attr, use it if we
 	//find one (this prevents buildup of attrs if we repeatedly create and delete colliders).
 	buildMenuCmd += "		int $madeConnection = 0;\n";
 	buildMenuCmd += "		for($j = 0; $j < $numColliders; $j++){\n";
@@ -1926,13 +1926,13 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "				break;\n";
 	buildMenuCmd += "			}\n";
 	buildMenuCmd += "		}\n";
-	
+
 	//if we didn't find an existing unconnected attr, connect it to a new attribute
 	buildMenuCmd += "		if( !$madeConnection ){\n";
 	buildMenuCmd += "			connectAttr -f ($selected[1] + \".worldMatrix[0]\") ($stretchMeshCmdDfrmr + \".primSphrCollider[\" + $numColliders + \"]\");\n";
-	buildMenuCmd += "		}\n";	
-	// We search the existing matrix array elements for one that is not connected. 
-	// if we find it, we connect our new attractor to that element. 
+	buildMenuCmd += "		}\n";
+	// We search the existing matrix array elements for one that is not connected.
+	// if we find it, we connect our new attractor to that element.
 	// otherwise, we connect it at a new element
 	buildMenuCmd += "		int $numColliders = `getAttr -size ($stretchMeshCmdDfrmr + \".matrix\")`;\n";
 	buildMenuCmd += "		int $emptyElement = $numColliders;\n";
@@ -1944,9 +1944,9 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "		connectAttr(($selected[1] + \".worldMatrix[0]\"), ($stretchMeshCmdDfrmr + \".matrix[\" + $emptyElement + \"]\"));\n";
 	buildMenuCmd += "	}\n";
-	
+
 	buildMenuCmd += "	addAttr -ln \"colliderMult\"  -at double  -min 0 -max 1 -dv 1 -keyable true $selected[1];\n";
-	
+
 	// Search for unconnected mshColliderMult attribute
 	buildMenuCmd += "	int $numColliderMults = `getAttr -size ($stretchMeshCmdDfrmr + \".primSphrColliderMult\")`;\n";
 	buildMenuCmd += "	int $emptySphereCollider = $numColliderMults;\n";
@@ -1957,18 +1957,18 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
 	buildMenuCmd += "	connectAttr (($selected[1] + \".colliderMult\"), ($stretchMeshCmdDfrmr + \".primSphrColliderMult[\" + $emptySphereCollider + \"]\"));\n";
-	
+
 	//We need to initialize the collider per-vertex mults to one,
 	buildMenuCmd += "	int $numVerts[];\n";
 	buildMenuCmd += "	$numVerts = `polyEvaluate -vertex $selected[0]`;\n";
 	buildMenuCmd += "	for($i = 0; $i < $numVerts[0]; $i++){\n";
-	buildMenuCmd += "		setAttr(($stretchMeshCmdDfrmr + \".primSphrColliderVrtMultList[\" + $i + \"].primSphrColliderVrtMult[\" + $emptySphereCollider + \"]\"), 1.0);\n";	
-	buildMenuCmd += "	}\n";	
+	buildMenuCmd += "		setAttr(($stretchMeshCmdDfrmr + \".primSphrColliderVrtMultList[\" + $i + \"].primSphrColliderVrtMult[\" + $emptySphereCollider + \"]\"), 1.0);\n";
+	buildMenuCmd += "	}\n";
 
 	// Enable the stretchMeshCmd now that we're done
 	buildMenuCmd += "	setAttr (($stretchMeshCmdDfrmr + \".nodeState\"), 0);\n";
 	buildMenuCmd += "}\n";
-	
+
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -1979,10 +1979,10 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		string $sel[];\n";
 	buildMenuCmd += "		$sel = `ls -sl -fl`;\n";
 	buildMenuCmd += "		int $i;\n";
-	buildMenuCmd += "		int $j;\n";	
-	buildMenuCmd += "		string $stretchMesh;\n";		
+	buildMenuCmd += "		int $j;\n";
+	buildMenuCmd += "		string $stretchMesh;\n";
 	buildMenuCmd += "		for($i = 0; $i < `size($sel)`; $i++){\n";
-	
+
 	buildMenuCmd += "			string $history[] = `listHistory($sel[$i])`;\n";
 	buildMenuCmd += "			for($j = 0; $j < `size($history)`; $j++){\n";
 	buildMenuCmd += "				if(`nodeType($history[$j])` == \"stretchMesh\"){\n";
@@ -1995,24 +1995,24 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			artSetToolAndSelectAttr( \"artAttrCtx\", \"weightGeometryFilter.\" + $stretchMesh + \".stiffness\" );\n";
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "}\n";
-	
-	
+
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// Add attractor to selected verts
 	//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	buildMenuCmd += "global proc addNewAttrctr(){\n";
 	// One of the selected objects should have a stretchMeshCmd, find it...
-	
+
 	buildMenuCmd += "	string $sel[];\n";
 	buildMenuCmd += "	$sel = `ls -sl -fl`;\n";
 	buildMenuCmd += "	int $i;\n";
-	buildMenuCmd += "	int $j;\n";	
-	buildMenuCmd += "	string $stretchMesh;\n";		
+	buildMenuCmd += "	int $j;\n";
+	buildMenuCmd += "	string $stretchMesh;\n";
 	buildMenuCmd += "	for($i = 0; $i < `size($sel)`; $i++){\n";
-	
+
 	buildMenuCmd += "		string $history[] = `listHistory($sel[$i])`;\n";
 	buildMenuCmd += "		for($j = 0; $j < `size($history)`; $j++){\n";
 	buildMenuCmd += "			if(`nodeType($history[$j])` == \"stretchMesh\"){\n";
@@ -2020,17 +2020,17 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			}\n";
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "}\n";
-	
+
 	buildMenuCmd += "	if($stretchMesh == \"\"){\n";
 	buildMenuCmd += "		error \"Select vertices on a mesh that has a stretchMeshCmd deformer\";\n";
 	buildMenuCmd += "		return;\n";
 	buildMenuCmd += "	}\n";
 
-	// Temporarily disable the stretchMeshCmd so it isn't evaluating as 
+	// Temporarily disable the stretchMeshCmd so it isn't evaluating as
 	// as we go
 	buildMenuCmd += "	setAttr (($stretchMesh + \".nodeState\"), 1);\n";
-	
-	// First, we need to find out if there is a locator selected. If so, we'll use that to 
+
+	// First, we need to find out if there is a locator selected. If so, we'll use that to
 	// connect the vertices to.  If not, we'll create a new locator.
 	buildMenuCmd += "	string $locator = \"\";\n";
 	buildMenuCmd += "	for($i = 0; $i < `size($sel)`; $i++){\n";
@@ -2050,8 +2050,8 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "	}\n";
 	buildMenuCmd += "	int $numAttrctrs = `getAttr -size ($stretchMesh + \".matrix\")`;\n";
 
-	//First we search the existing matrix array elements for one that is not connected. 
-	// if we find it, we connect our new attractor to that element. 
+	//First we search the existing matrix array elements for one that is not connected.
+	// if we find it, we connect our new attractor to that element.
 	// otherwise, we connect it at a new element
 	buildMenuCmd += "int $emptyElement = $numAttrctrs;\n";
 	buildMenuCmd += "for($i = 0; $i < $numAttrctrs; $i++){\n";
@@ -2070,9 +2070,9 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
 	buildMenuCmd += "	for($i = 0; $i < $numVerts[0]; $i++){\n";
-	buildMenuCmd += "		setAttr(($stretchMesh + \".attrctrVrtMultList[\" + $i + \"].attrctrVrtMult[\" + $emptyElement + \"]\"), 0.0);\n";	
+	buildMenuCmd += "		setAttr(($stretchMesh + \".attrctrVrtMultList[\" + $i + \"].attrctrVrtMult[\" + $emptyElement + \"]\"), 0.0);\n";
 	buildMenuCmd += "}\n";
-	
+
 	buildMenuCmd += "int $locatorConnected = 0;\n";
 	buildMenuCmd += "	for($i = 0; $i < `size($sel)`; $i++){\n";
 	buildMenuCmd += "		if (`nodeType($sel[$i])` == \"transform\"){\n";
@@ -2096,34 +2096,34 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			}\n";
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
-	
+
 	// Enable the stretchMeshCmd now that we're done
 	buildMenuCmd += "	setAttr (($stretchMesh + \".nodeState\"), 0);\n";
 	buildMenuCmd += "}\n";
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// End Add attractor to selected verts
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	
 
-	
+
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// Add curve attractor to selected verts
 	//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	buildMenuCmd += "global proc addNewCrvAttrctr(){\n";
 	// One of the selected objects should have a stretchMesh node, find it...
-	
+
 	buildMenuCmd += "	string $sel[];\n";
 	buildMenuCmd += "	$sel = `ls -sl -fl`;\n";
 	buildMenuCmd += "	int $i;\n";
-	buildMenuCmd += "	int $j;\n";	
-	buildMenuCmd += "	int $numCrvAttractors;\n";	
-	buildMenuCmd += "	string $stretchMesh;\n";		
+	buildMenuCmd += "	int $j;\n";
+	buildMenuCmd += "	int $numCrvAttractors;\n";
+	buildMenuCmd += "	string $stretchMesh;\n";
 	buildMenuCmd += "	string $stretchMeshPoly;\n";
 	buildMenuCmd += "	for($i = 0; $i < `size($sel)`; $i++){\n";
-	
+
 	buildMenuCmd += "		string $history[] = `listHistory($sel[$i])`;\n";
 	buildMenuCmd += "		for($j = 0; $j < `size($history)`; $j++){\n";
 	buildMenuCmd += "			if(`nodeType($history[$j])` == \"stretchMesh\"){\n";
@@ -2132,16 +2132,16 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			}\n";
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
-	
+
 	buildMenuCmd += "	if($stretchMesh == \"\"){\n";
 	buildMenuCmd += "		error \"Select vertices on a mesh that has a stretchMeshCmd deformer\";\n";
 	buildMenuCmd += "		return;\n";
 	buildMenuCmd += "	}\n";
-	
-	// Temporarily disable the stretchMeshCmd so it isn't evaluating as 
+
+	// Temporarily disable the stretchMeshCmd so it isn't evaluating as
 	// as we go
 	buildMenuCmd += "	setAttr (($stretchMesh + \".nodeState\"), 1);\n";
-	
+
 	// First, we need to find out if there is a curve selected. If not, we need to exit with an error message
 	buildMenuCmd += "	string $curve = \"\";\n";
 	buildMenuCmd += "	for($i = 0; $i < `size($sel)`; $i++){\n";
@@ -2155,15 +2155,15 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			}\n";
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
-	
+
 	// Create attractor curve and make connections
 	buildMenuCmd += "	if ($curve == \"\"){\n";
 	buildMenuCmd += "		error \"You must select a curve and some StretchMesh vertices before running this command\";\n";
 	buildMenuCmd += "		return;\n";
 	buildMenuCmd += "	}\n";
 
-	// We search the existing curve attractor array elements for one that is not connected. 
-	// if we find it, we connect our new attractor to that element. 
+	// We search the existing curve attractor array elements for one that is not connected.
+	// if we find it, we connect our new attractor to that element.
 	// otherwise, we connect it at a new element
 	buildMenuCmd += "	int $numAttrctrs = `getAttr -size ($stretchMesh + \".crvAttrctrCurve\")`;\n";
 	buildMenuCmd += "	int $emptyElement = $numAttrctrs;\n";
@@ -2176,7 +2176,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 
 	// Call the stretchMesh command to build the SM connections, and calculate the closest UV points to the curve
 	buildMenuCmd += "stretchMesh -edit -addCurveAttractor $curve $stretchMesh;\n";
-		
+
 	//We need to initialize the attractor mults to zero, in case any previously created/deleted attractors have old values in there
 	buildMenuCmd += "	int $numVerts[];\n";
 	buildMenuCmd += "	for($i = 0; $i < `size($sel)`; $i++){\n";
@@ -2186,9 +2186,9 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
 	buildMenuCmd += "	for($i = 0; $i < $numVerts[0]; $i++){\n";
-	buildMenuCmd += "		setAttr(($stretchMesh + \".crvAttrctrVrtMultList[\" + $i + \"].crvAttrctrVrtMult[\" + $emptyElement + \"]\"), 0.0);\n";	
+	buildMenuCmd += "		setAttr(($stretchMesh + \".crvAttrctrVrtMultList[\" + $i + \"].crvAttrctrVrtMult[\" + $emptyElement + \"]\"), 0.0);\n";
 	buildMenuCmd += "	}\n";
-	
+
 	buildMenuCmd += "	for($i = 0; $i < `size($sel)`; $i++){\n";
 	buildMenuCmd += "		if (`nodeType($sel[$i])` == \"transform\"){\n";
 	buildMenuCmd += "			continue;\n";
@@ -2200,22 +2200,22 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	//buildMenuCmd += "		string $match = `match \"\[[0-9]+\]\" $sel[$i]`;\n";
 	//buildMenuCmd += "		$match = `substitute \"\\\\[\" $match \"\"`;\n";
 	//buildMenuCmd += "		$match = `substitute \"\\\\]\" $match \"\"`;\n";
-	
+
 	buildMenuCmd += "		if ($match != \"\"){\n";
 	buildMenuCmd += "			int $vert_id = $match;\n";
 	buildMenuCmd += "			setAttr(($stretchMesh + \".crvAttrctrVrtMultList[\" + $vert_id + \"].crvAttrctrVrtMult[\" + $emptyElement + \"]\"), 1.0);\n";
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
-	
+
 	// Enable the stretchMeshCmd now that we're done
 	buildMenuCmd += "	setAttr (($stretchMesh + \".nodeState\"), 0);\n";
 	buildMenuCmd += "}\n";
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// End Add curve attractor to selected verts
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	
+
+
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	// Helper function that returns the center of the selection list (passed in as argument)
@@ -2250,8 +2250,8 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 // Return the influence name with the \\" (Hold)\\" removed.
 //
 	buildMenuCmd += "	{\n";
-	buildMenuCmd += "		string	$subInf = $infl;	\n";	
-	buildMenuCmd += "		int 	$sizeInf = size($infl);\n";	
+	buildMenuCmd += "		string	$subInf = $infl;	\n";
+	buildMenuCmd += "		int 	$sizeInf = size($infl);\n";
 	buildMenuCmd += "		if ( $sizeInf > 7 ) {\n";
 	buildMenuCmd += "			string $hasHold = substring( $infl, ($sizeInf-6), $sizeInf );\n";
 	buildMenuCmd += "			if ($hasHold == (\" (Hold)\")) {\n";
@@ -2303,7 +2303,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		else\n";
 	buildMenuCmd += "		{\n";
 		// Not of skinCluster type. Just return \"matrix\" connections
-	
+
 	buildMenuCmd += "			string $stringResult[];\n";
 	buildMenuCmd += "			if(`currentCtx` == \"artAttrAttractorContext\"){\n";
 	buildMenuCmd += "				string $crvAttractors[] = `listConnections ($inSkinClusterName + \".crvAttrctrCurve\")`;\n";
@@ -2317,7 +2317,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "				$stringResult = stringArrayCatenate($stringResult, $sphrColliders);\n";
 	buildMenuCmd += "			}\n";
 	buildMenuCmd += "			return $stringResult;\n";
-	
+
 //	buildMenuCmd += "			return `listConnections ($inSkinClusterName + \".crvAttrctrCurve\")`;\n";
 	buildMenuCmd += "		}\n";
 	buildMenuCmd += "	}\n";
@@ -2325,7 +2325,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "	global proc string artSkinInflNameFromShortName(\n";
 	buildMenuCmd += "		string $shortName \n";
 	buildMenuCmd += "	)\n";
-// 
+//
 // Returns a long name of the influence object.
 	buildMenuCmd += "	{\n";
 	buildMenuCmd += "		string $hasHold = \"\";\n";
@@ -2394,7 +2394,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			if ( $tmp[0] == $name ) \n";
 	buildMenuCmd += "				return $label;\n";
 	buildMenuCmd += "		}\n";
-		
+
 	buildMenuCmd += "		string 	$shortName = $name;\n";
 
 	buildMenuCmd += "		string	$buffer[];\n";
@@ -2416,7 +2416,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		string	$inflList[]\n";
 	buildMenuCmd += "	)\n";
 //
-// Return an array with all influence nodes 
+// Return an array with all influence nodes
 // connected to the passed skin cluster node.
 //
 	buildMenuCmd += "	{\n";
@@ -2426,7 +2426,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		string	$infl, $conn;\n";
 	buildMenuCmd += "		int 	$numInfls = 0;\n";
 	buildMenuCmd += "		for ( $conn in $connections ) {\n";
-		// Check and see if the influence is 
+		// Check and see if the influence is
 		// already in the current list.
 	buildMenuCmd += "			int $found = 0;\n";
 	buildMenuCmd += "			for( $infl in $inflList ) {\n";
@@ -2441,7 +2441,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			}\n";
 	buildMenuCmd += "		}\n";
 
-	// Now try to make a short name to make the 
+	// Now try to make a short name to make the
 	// names easier for the user to read.
 	buildMenuCmd += "		string	$buffer[];\n";
 	buildMenuCmd += "		string	$inflListShortName[];\n";
@@ -2455,7 +2455,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			$usingShortNames++;\n";
 	buildMenuCmd += "		}\n";
 
-	// Deal with names which are now duplicated 
+	// Deal with names which are now duplicated
 	// because they got shortened - basically copy
 	// the long name to resolve it.
 	buildMenuCmd += "		int $badIndexList[];\n";
@@ -2463,7 +2463,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		for ($ii = 0; $ii < $numInfls; $ii++) {\n";
 	buildMenuCmd += "			for ($jj=0;$jj<$numInfls;$jj++) {\n";
 	buildMenuCmd += "				if ($ii == $jj) continue;\n";
-			
+
 			// Check if they are the same.
 	buildMenuCmd += "				if ($inflListShortName[$ii] == $inflListShortName[$jj]) {\n";
 	buildMenuCmd += "					$badIndexList[$badIndexCount++] = $ii;\n";
@@ -2477,8 +2477,8 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			$inflListShortName[$badIndex] = $inflList[$badIndex];\n";
 	buildMenuCmd += "			$usingShortNames--;\n";
 	buildMenuCmd += "		}\n";
-	
-	// Append the word \"Hold\" to the influence 
+
+	// Append the word \"Hold\" to the influence
 	// nodes which are in LockWeights mode.
 	buildMenuCmd += "		for ($ii = 0; $ii < $numInfls; $ii++) {\n";
 	buildMenuCmd += "			if (`attributeQuery -n $inflList[$ii] -ex liw`) {\n";
@@ -2490,7 +2490,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "			}\n";
 	buildMenuCmd += "		}\n";
 
-	// Sort the list of influences if the  
+	// Sort the list of influences if the
 	// optionVar 'sortSkinPaintList' is true.
 	buildMenuCmd += "		int $sortList = `optionVar -q sortSkinPaintList`;\n";
 	buildMenuCmd += "		if ( 1 == $sortList ) {\n";
@@ -2518,7 +2518,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 //
 //	Description:
 // 		Creates a menu that shows all the paintable joints.
-// 
+//
 	buildMenuCmd += "	{\n";
 	buildMenuCmd += "		global string $artSkinCurrentInfluence;\n";
 
@@ -2582,7 +2582,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 
 	// Clean up the existing list
 	buildMenuCmd += "		textScrollList -e -ra skinClusterInflList;\n";
-	
+
 	// Create a list of all influence objects names.
 	buildMenuCmd += "		string	$inflList[], $inflListShortNames[];\n";
 	buildMenuCmd += "		int		$inflIdx = 0;\n";
@@ -2623,23 +2623,23 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 
 	buildMenuCmd += "		textScrollList -e -sc (\"artSkinSelectInfluence \"+$artCommand+\" \\\"\\\" \\\"\\\"\") skinClusterInflList;\n";
 
-	
-	
+
+
 	// =================================
-	// Set the selection 
+	// Set the selection
 	// =================================
 
-	// First check if the previously selected influence 
-	// object is valid for the selected surfaces and 
-	// if that's the case, select it again. Otherwise 
-	// use the influence that was last used for the 
+	// First check if the previously selected influence
+	// object is valid for the selected surfaces and
+	// if that's the case, select it again. Otherwise
+	// use the influence that was last used for the
 	// first of the surfaces.
 	buildMenuCmd += "		for ($ii = 0; $ii < $numInfls; $ii++) {\n";
 	buildMenuCmd += "			string	$infl 	 = artSkinHoldSubstring($inflList[$ii]);\n";
 	buildMenuCmd += "			if ( ( $infl == $artSkinCurrentInfluence ) ||\n";
 	buildMenuCmd += "				 ( $inflList[$ii] == $artSkinCurrentInfluence ) )\n";
 	buildMenuCmd += "			{\n";
-			// Make the connection bewteen the influence 
+			// Make the connection bewteen the influence
 			// object and the corresponding skin cluster.
 	buildMenuCmd += "				artSkinSelectInfluence( $artCommand, $infl, $inflListShortNames[$ii] );\n";
 	buildMenuCmd += "				return;\n";
@@ -2647,8 +2647,8 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		}\n";
 
 	// Since the selected influence has not been found
-	// Find what influence object is currently used 
-	// for the first surface and make it the current 
+	// Find what influence object is currently used
+	// for the first surface and make it the current
 	// object for all the other surfaces too.
 
 	buildMenuCmd += "		string $skinCluster = $skinClusters[0];\n";
@@ -2683,7 +2683,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "					}\n";
 	buildMenuCmd += "				}\n";
 
-			// Make the connection bewteen the influence 
+			// Make the connection bewteen the influence
 			// object and the corresponding skin cluster.
 	buildMenuCmd += "				artSkinSelectInfluence( $artCommand, $inf, $shortName );\n";
 	buildMenuCmd += "				return;\n";
@@ -2692,7 +2692,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "	}\n";
 
 #endif
-	
+
 //
 // Same as artAttrSkinToolScript() but for StretchMesh nodes
 //
@@ -2706,7 +2706,7 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 	buildMenuCmd += "		}else if($whatToPaint == \"colliders\"){\n";
 	buildMenuCmd += "			$tool = \"artAttrColliderContext\";\n";
 	buildMenuCmd += "		}\n";
-							
+
 	buildMenuCmd += "		makePaintable -activateAll false;\n";
 	buildMenuCmd += "		makePaintable -activate true \"skinCluster\" \"*\";\n";
 	buildMenuCmd += "		makePaintable \"stretchMesh\" \"paintWeights\";\n";
@@ -2734,9 +2734,9 @@ MStatus stretchMeshCmd::buildstretchMeshCmdMenu()
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	buildMenuCmd += "stretchMeshCmdMenu();\n";
-	
+
 	MGlobal::executeCommand(buildMenuCmd);
-	
+
 	return MS::kSuccess;
 }
 
@@ -2747,7 +2747,7 @@ MStatus stretchMeshCmd::Register(MFnPlugin& ioPlugin)
 {
 	MStatus status = ioPlugin.registerCommand(MAYA_stretchMeshCMD_NAME, &creator, stretchMeshCmd::newSyntax);
 
-	if (MFAIL(status)) 
+	if (MFAIL(status))
 		return MReturnStatus(status, "Failed to register " MAYA_stretchMeshCMD_NAME " command");
 	else
 		Registered = true;
@@ -2762,7 +2762,7 @@ MStatus stretchMeshCmd::Deregister(MFnPlugin& ioPlugin)
 {
 	MStatus status = ioPlugin.deregisterCommand(MAYA_stretchMeshCMD_NAME);
 
-	if (MFAIL(status)) 
+	if (MFAIL(status))
 		return MReturnStatus(status, "Failed to deregister " MAYA_stretchMeshCMD_NAME " command");
 	else
 		Registered = false;

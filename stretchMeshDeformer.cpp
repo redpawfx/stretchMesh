@@ -8,7 +8,7 @@
 #include <maya/MItGeometry.h>
 #include <maya/MGlobal.h>
 
-#include <maya/MTypeId.h> 
+#include <maya/MTypeId.h>
 #include <maya/MDagPath.h>
 #include <maya/MPlug.h>
 #include <maya/MDataBlock.h>
@@ -37,7 +37,7 @@
 #include <maya/MMatrixArray.h>
 
 #include <maya/MItMeshVertex.h>
-#include <maya/MPxLocatorNode.h> 
+#include <maya/MPxLocatorNode.h>
 
 #include "CRSpline.h"
 
@@ -168,7 +168,7 @@ MStatus stretchMeshDeformer::initialize()
 	MFnNumericAttribute nAttr;
 	MFnMatrixAttribute mAttr;
 	MFnCompoundAttribute cmpAttr;
-	MFnUnitAttribute unitFn;    
+	MFnUnitAttribute unitFn;
 	MFnTypedAttribute typedAttr;
 	MFnNumericAttribute stfAttr;
 
@@ -178,22 +178,22 @@ MStatus stretchMeshDeformer::initialize()
 	nAttr.setReadable(false);
 	nAttr.setStorable(true);
 	nAttr.setHidden(true);
-	addAttribute( stretchMeshVersion ); 
+	addAttribute( stretchMeshVersion );
 
 	collisionStep=nAttr.create( "collisionStep", "collS", MFnNumericData::kInt );
 	nAttr.setDefault(1);
 	nAttr.setMin(1);
 	nAttr.setKeyable(true);
-	addAttribute( collisionStep); 
-	
+	addAttribute( collisionStep);
+
 	iterations=nAttr.create( "iterations", "itr", MFnNumericData::kInt );
-	// iterations is defaulted to 0 so that the deformer effectively doesn't run during the setup process. The stretchMeshDeformer() 
-	// python script will set the iterations attribute after the initialization of all the relevant deformer attributes (mean_weights, 
-	// conn_vrt_ids and b). 
+	// iterations is defaulted to 0 so that the deformer effectively doesn't run during the setup process. The stretchMeshDeformer()
+	// python script will set the iterations attribute after the initialization of all the relevant deformer attributes (mean_weights,
+	// conn_vrt_ids and b).
 	nAttr.setDefault(0);
 	nAttr.setMin(0);
 	nAttr.setKeyable(true);
-	addAttribute( iterations); 
+	addAttribute( iterations);
 
 	collisions = nAttr.create( "collisions", "coll", MFnNumericData::kBoolean, true );
 	nAttr.setKeyable(true);
@@ -205,26 +205,26 @@ MStatus stretchMeshDeformer::initialize()
 	nAttr.setKeyable(false);
 	nAttr.setArray(true);
 	nAttr.setReadable(true);
-	nAttr.setUsesArrayDataBuilder(true); 
+	nAttr.setUsesArrayDataBuilder(true);
 	nAttr.setStorable(true);
-	addAttribute( meanWeights ); 
+	addAttribute( meanWeights );
 
 	meanWeightsList=cmpAttr.create( "meanWeightsList", "mwl" );
 	cmpAttr.addChild(meanWeights);
 	cmpAttr.setHidden(true);
 	cmpAttr.setArray(true);
 	cmpAttr.setUsesArrayDataBuilder(true);
-	addAttribute( meanWeightsList ); 
+	addAttribute( meanWeightsList );
 
 	connVrtId=nAttr.create( "connVrtId", "cvid", MFnNumericData::kInt );
 	nAttr.setDefault(-1);
 	nAttr.setKeyable(false);
 	nAttr.setArray(true);
 	nAttr.setReadable(true);
-	//nAttr.setUsesArrayDataBuilder(true); 
+	//nAttr.setUsesArrayDataBuilder(true);
 	nAttr.setStorable(true);
 	nAttr.setHidden(true);
-	addAttribute( connVrtId ); 
+	addAttribute( connVrtId );
 
 	connVrtIdList=cmpAttr.create( "connVrtIdList", "cvidl" );
 	cmpAttr.addChild(connVrtId);
@@ -232,17 +232,17 @@ MStatus stretchMeshDeformer::initialize()
 	cmpAttr.setArray(true);
 	//cmpAttr.setUsesArrayDataBuilder(true);
 	cmpAttr.setStorable(true);
-	addAttribute( connVrtIdList ); 
+	addAttribute( connVrtIdList );
 
 	connVrtIdNrmlOrder=nAttr.create( "connVrtIdNrmlOrder", "cvidN", MFnNumericData::kInt );
 	nAttr.setDefault(-1);
 	nAttr.setKeyable(false);
 	nAttr.setArray(true);
 	nAttr.setReadable(true);
-	//nAttr.setUsesArrayDataBuilder(true); 
+	//nAttr.setUsesArrayDataBuilder(true);
 	nAttr.setStorable(true);
 	nAttr.setHidden(true);
-	addAttribute( connVrtIdNrmlOrder ); 
+	addAttribute( connVrtIdNrmlOrder );
 
 	connVrtIdNrmlOrderList=cmpAttr.create( "connVrtIdNrmlOrderList", "cvidnl" );
 	cmpAttr.addChild(connVrtIdNrmlOrder);
@@ -250,17 +250,17 @@ MStatus stretchMeshDeformer::initialize()
 	cmpAttr.setArray(true);
 	//cmpAttr.setUsesArrayDataBuilder(true);
 	cmpAttr.setStorable(true);
-	addAttribute( connVrtIdNrmlOrderList ); 
-	
+	addAttribute( connVrtIdNrmlOrderList );
+
 	b=nAttr.create( "b", "b", MFnNumericData::kDouble );
 	nAttr.setDefault(-1.0);
 	nAttr.setKeyable(false);
 	nAttr.setArray(true);
 	nAttr.setReadable(true);
-	nAttr.setUsesArrayDataBuilder(true); 
+	nAttr.setUsesArrayDataBuilder(true);
 	nAttr.setStorable(true);
 	nAttr.setHidden(true);
-	addAttribute( b ); 
+	addAttribute( b );
 
 	enableScaleSafe = nAttr.create( "enableScaleSafe", "ess", MFnNumericData::kBoolean, false );
 	nAttr.setKeyable(true);
@@ -273,101 +273,101 @@ MStatus stretchMeshDeformer::initialize()
 	nAttr.setKeyable(false);
 	nAttr.setArray(true);
 	nAttr.setReadable(true);
-	nAttr.setUsesArrayDataBuilder(true); 
+	nAttr.setUsesArrayDataBuilder(true);
 	nAttr.setStorable(true);
-	addAttribute( bScalable ); 
-	
+	addAttribute( bScalable );
+
 	bScalableList=cmpAttr.create( "bScalableList", "bsl" );
 	cmpAttr.addChild(bScalable);
 	cmpAttr.setHidden(true);
 	cmpAttr.setArray(true);
 	cmpAttr.setUsesArrayDataBuilder(true);
-	addAttribute( bScalableList ); 
-	
+	addAttribute( bScalableList );
+
 	stiffness=stfAttr.create( "stiffness", "stf", MFnNumericData::kFloat, 0.0);
 	stfAttr.setHidden(true);
 	stfAttr.setStorable(true);
 	stfAttr.setArray(true);
-	stfAttr.setUsesArrayDataBuilder(true); 
+	stfAttr.setUsesArrayDataBuilder(true);
 	addAttribute( stiffness );
-	
+
 	stiffnessList=cmpAttr.create( "stiffnessList", "stfl" );
 	cmpAttr.addChild(stiffness);
 	cmpAttr.setHidden(true);
 	cmpAttr.setArray(true);
 	cmpAttr.setUsesArrayDataBuilder(true);
-	addAttribute( stiffnessList ); 
-	
+	addAttribute( stiffnessList );
+
 	attrWorldMatrixList=mAttr.create("matrix", "ma");
-	mAttr.setArray(true); 
-	mAttr.setReadable(false); 
-	mAttr.setKeyable(false); 
+	mAttr.setArray(true);
+	mAttr.setReadable(false);
+	mAttr.setKeyable(false);
 	mAttr.setConnectable(true);
 	mAttr.setHidden(true);
-	addAttribute( attrWorldMatrixList ); 
-	
+	addAttribute( attrWorldMatrixList );
+
 	attrctrStrength=nAttr.create( "attrctrStrength", "aStr", MFnNumericData::kDouble, 0.0);
-	nAttr.setArray(true); 
-	nAttr.setReadable(false); 
-	nAttr.setKeyable(false); 
+	nAttr.setArray(true);
+	nAttr.setReadable(false);
+	nAttr.setKeyable(false);
 	nAttr.setConnectable(true);
 	nAttr.setHidden(true);
-	addAttribute( attrctrStrength ); 
-	
+	addAttribute( attrctrStrength );
+
 	attrctrVrtMult=nAttr.create( "attrctrVrtMult", "aVMlt", MFnNumericData::kDouble, 0.0);
 	nAttr.setArray(true);
 	nAttr.setUsesArrayDataBuilder(true);
 	nAttr.setHidden(true);
-	addAttribute( attrctrVrtMult ); 
-	
+	addAttribute( attrctrVrtMult );
+
 	attrctrVrtMultList=cmpAttr.create( "attrctrVrtMultList", "aVMltL" );
 	cmpAttr.addChild(attrctrVrtMult);
 	cmpAttr.setHidden(true);
 	cmpAttr.setArray(true);
 	cmpAttr.setUsesArrayDataBuilder(true);
-	addAttribute( attrctrVrtMultList ); 
-	
+	addAttribute( attrctrVrtMultList );
+
 	// Curve attractors
 	crvAttractorCurve=typedAttr.create("crvAttrctrCurve", "cACrv", MFnData::kNurbsCurve);
 	typedAttr.setArray(true);
 	typedAttr.setReadable(true);
 	typedAttr.setHidden(true);
-	addAttribute( crvAttractorCurve ); 
-	
+	addAttribute( crvAttractorCurve );
+
 	crvAttractorStrength=nAttr.create( "crvAttrctrStrength", "cAStr", MFnNumericData::kDouble, 0.0);
-	nAttr.setArray(true); 
-	nAttr.setReadable(false); 
-	nAttr.setKeyable(false); 
+	nAttr.setArray(true);
+	nAttr.setReadable(false);
+	nAttr.setKeyable(false);
 	nAttr.setConnectable(true);
-	addAttribute( crvAttractorStrength ); 
-	
+	addAttribute( crvAttractorStrength );
+
 	crvAttractorVrtMult=nAttr.create( "crvAttrctrVrtMult", "cAVM", MFnNumericData::kDouble, 0.0);
 	nAttr.setArray(true);
 	nAttr.setHidden(true);
 	nAttr.setUsesArrayDataBuilder(true);
-	addAttribute( crvAttractorVrtMult ); 
-	
+	addAttribute( crvAttractorVrtMult );
+
 	crvAttractorVrtMultList=cmpAttr.create( "crvAttrctrVrtMultList", "aVML" );
 	cmpAttr.addChild(crvAttractorVrtMult);
 	cmpAttr.setHidden(true);
 	cmpAttr.setArray(true);
 	cmpAttr.setUsesArrayDataBuilder(true);
-	addAttribute( crvAttractorVrtMultList ); 
+	addAttribute( crvAttractorVrtMultList );
 
 	crvAttractorAttachUV=nAttr.create( "crvAttrctrAttchUV", "cAUV", MFnNumericData::kDouble, 0.0);
 	nAttr.setArray(true);
 	nAttr.setUsesArrayDataBuilder(true);
 	nAttr.setHidden(true);
-	addAttribute( crvAttractorAttachUV ); 
-	
+	addAttribute( crvAttractorAttachUV );
+
 	crvAttractorAttachUVList=cmpAttr.create( "crvAttrctrAttchUVList", "cAUVL" );
 	cmpAttr.addChild(crvAttractorAttachUV);
 	cmpAttr.setHidden(true);
 	cmpAttr.setArray(true);
 	cmpAttr.setUsesArrayDataBuilder(true);
-	addAttribute( crvAttractorAttachUVList ); 
+	addAttribute( crvAttractorAttachUVList );
 	// End curve attractors
-	
+
 	// Make sure the <kDoubleArray> attribute has a default value. Behaves weird otherwise.
 	MDoubleArray	defaultDoubleArray;
 	MFnDoubleArrayData defaultDoubleArrayData;
@@ -375,137 +375,137 @@ MStatus stretchMeshDeformer::initialize()
 	defaultDoubleArrayAttr = defaultDoubleArrayData.create(defaultDoubleArray);
 
 	attrPaintWeights = typedAttr.create("paintWeights", "ptw", MFnDoubleArrayData::kDoubleArray);
-	typedAttr.setReadable(false); 
-	typedAttr.setKeyable(false); 
+	typedAttr.setReadable(false);
+	typedAttr.setKeyable(false);
 	typedAttr.setConnectable(true);
 	typedAttr.setDefault(defaultDoubleArrayAttr);
 	addAttribute(attrPaintWeights);
 
 	MFnMessageAttribute msgAttr;
-	attrPaintTrans = msgAttr.create("paintTrans", "ptt"); 
-	msgAttr.setReadable(false); 
+	attrPaintTrans = msgAttr.create("paintTrans", "ptt");
+	msgAttr.setReadable(false);
 	addAttribute(attrPaintTrans);
 	attrPaintArrDirty = msgAttr.create("paintArrDirty", "pad");
-	msgAttr.setReadable(false); 
+	msgAttr.setReadable(false);
 	addAttribute(attrPaintArrDirty);
 
 	mshCollider = typedAttr.create( "mshCollider", "mcldr", MFnData::kMesh );
 	typedAttr.setArray(true);
 	typedAttr.setReadable(true);
 	typedAttr.setCached(true);
-	addAttribute( mshCollider ); 
+	addAttribute( mshCollider );
 
 	mshColliderPad = nAttr.create( "mshColliderPad", "mcldrp", MFnNumericData::kDouble );
 	nAttr.setDefault(0);
 	nAttr.setKeyable(true);
 	nAttr.setArray(true);
-	addAttribute( mshColliderPad ); 
+	addAttribute( mshColliderPad );
 
 	mshColliderInflated = typedAttr.create( "mshColliderInflated", "mcldri", MFnData::kMesh );
 	typedAttr.setArray(true);
 	typedAttr.setReadable(true);
 	typedAttr.setCached(true);
-	typedAttr.setUsesArrayDataBuilder(true); 
+	typedAttr.setUsesArrayDataBuilder(true);
 	typedAttr.setHidden(true);
-	addAttribute( mshColliderInflated ); 
+	addAttribute( mshColliderInflated );
 
 	mshColliderMult=nAttr.create( "mshColliderMult", "mcm", MFnNumericData::kDouble, 0.0);
-	nAttr.setArray(true); 
-	nAttr.setReadable(false); 
-	nAttr.setKeyable(false); 
+	nAttr.setArray(true);
+	nAttr.setReadable(false);
+	nAttr.setKeyable(false);
 	nAttr.setConnectable(true);
 	nAttr.setHidden(true);
-	addAttribute( mshColliderMult ); 
-	
+	addAttribute( mshColliderMult );
+
 	mshColliderVrtMult=nAttr.create( "mshColliderVrtMult", "mCVM", MFnNumericData::kDouble, 0.0);
 	nAttr.setArray(true);
 	nAttr.setUsesArrayDataBuilder(true);
 	nAttr.setHidden(true);
-	addAttribute( mshColliderVrtMult ); 
-	
+	addAttribute( mshColliderVrtMult );
+
 	mshColliderVrtMultList=cmpAttr.create( "mshColliderVrtMultList", "mCVML" );
 	cmpAttr.addChild(mshColliderVrtMult);
 	cmpAttr.setHidden(true);
 	cmpAttr.setArray(true);
 	cmpAttr.setUsesArrayDataBuilder(true);
-	addAttribute( mshColliderVrtMultList ); 
+	addAttribute( mshColliderVrtMultList );
 
 	nrbsCollider = typedAttr.create( "nrbsCollider", "ncldr", MFnData::kNurbsSurface );
 	typedAttr.setArray(true);
 	typedAttr.setReadable(true);
 	typedAttr.setCached(true);
 	typedAttr.setHidden(true);
-	addAttribute( nrbsCollider ); 
-	
+	addAttribute( nrbsCollider );
+
 	primSphrColliderList = mAttr.create("primSphrCollider", "psc");
-	mAttr.setArray(true); 
-	mAttr.setReadable(false); 
-	mAttr.setKeyable(false); 
+	mAttr.setArray(true);
+	mAttr.setReadable(false);
+	mAttr.setKeyable(false);
 	mAttr.setConnectable(true);
 	mAttr.setHidden(true);
-	addAttribute( primSphrColliderList ); 
-	
+	addAttribute( primSphrColliderList );
+
 	primSphrColliderMult=nAttr.create( "primSphrColliderMult", "scm", MFnNumericData::kDouble, 0.0);
-	nAttr.setArray(true); 
-	nAttr.setReadable(false); 
-	nAttr.setKeyable(false); 
+	nAttr.setArray(true);
+	nAttr.setReadable(false);
+	nAttr.setKeyable(false);
 	nAttr.setConnectable(true);
 	nAttr.setHidden(true);
-	addAttribute( primSphrColliderMult ); 
-	
+	addAttribute( primSphrColliderMult );
+
 	primSphrColliderVrtMult=nAttr.create( "primSphrColliderVrtMult", "sCVM", MFnNumericData::kDouble, 0.0);
 	nAttr.setArray(true);
 	nAttr.setUsesArrayDataBuilder(true);
 	nAttr.setHidden(true);
-	addAttribute( primSphrColliderVrtMult ); 
-	
+	addAttribute( primSphrColliderVrtMult );
+
 	primSphrColliderVrtMultList=cmpAttr.create( "primSphrColliderVrtMultList", "sCVML" );
 	cmpAttr.addChild(primSphrColliderVrtMult);
 	cmpAttr.setHidden(true);
 	cmpAttr.setArray(true);
 	cmpAttr.setUsesArrayDataBuilder(true);
-	addAttribute( primSphrColliderVrtMultList ); 
-	
+	addAttribute( primSphrColliderVrtMultList );
+
 	primCrvColliderList = typedAttr.create("primCrvCollider", "pcc", MFnData::kNurbsCurve);
 	typedAttr.setArray(true);
 	typedAttr.setReadable(true);
 	typedAttr.setHidden(true);
-	addAttribute( primCrvColliderList ); 
-	
+	addAttribute( primCrvColliderList );
+
 	primCrvColliderMult=nAttr.create( "crvColliderMult", "ccm", MFnNumericData::kDouble, 0.0);
-	nAttr.setArray(true); 
-	nAttr.setReadable(false); 
-	nAttr.setKeyable(false); 
+	nAttr.setArray(true);
+	nAttr.setReadable(false);
+	nAttr.setKeyable(false);
 	nAttr.setConnectable(true);
 	nAttr.setHidden(true);
-	addAttribute( primCrvColliderMult ); 
-	
+	addAttribute( primCrvColliderMult );
+
 	crvColliderVrtMult=nAttr.create( "crvColliderVrtMult", "cCVM", MFnNumericData::kDouble, 0.0);
 	nAttr.setArray(true);
 	nAttr.setHidden(true);
 	nAttr.setUsesArrayDataBuilder(true);
-	addAttribute( crvColliderVrtMult ); 
-	
+	addAttribute( crvColliderVrtMult );
+
 	crvColliderVrtMultList=cmpAttr.create( "crvColliderVrtMultList", "cCVML" );
 	cmpAttr.addChild(crvColliderVrtMult);
 	cmpAttr.setHidden(true);
 	cmpAttr.setArray(true);
 	cmpAttr.setUsesArrayDataBuilder(true);
-	addAttribute( crvColliderVrtMultList ); 
+	addAttribute( crvColliderVrtMultList );
 
 	crvColliderRadius=nAttr.create( "crvColliderRadius", "cCR", MFnNumericData::kDouble, 0.0);
 	nAttr.setArray(true);
 	nAttr.setHidden(true);
 	nAttr.setUsesArrayDataBuilder(true);
-	addAttribute( crvColliderRadius ); 
-	
+	addAttribute( crvColliderRadius );
+
 	crvColliderRadiusList=cmpAttr.create( "crvColliderRadiusList", "cCRL" );
 	cmpAttr.addChild(crvColliderRadius);
 	cmpAttr.setHidden(true);
 	cmpAttr.setArray(true);
 	cmpAttr.setUsesArrayDataBuilder(true);
-	addAttribute( crvColliderRadiusList ); 
-	
+	addAttribute( crvColliderRadiusList );
+
 	// affects
 	//
 	attributeAffects( stretchMeshDeformer::collisionStep, stretchMeshDeformer::outputGeom );
@@ -549,7 +549,7 @@ MStatus stretchMeshDeformer::initialize()
 void stretchMeshDeformer::postConstructor()
 {
 	MPxDeformerNode::postConstructor();
-	
+
 	MObject this_mobj		= thisMObject();
 	mWeightListCallbackId	= MNodeMessage::addAttributeChangedCallback(this_mobj, sAttrChangedCallback, this);
 }
@@ -590,20 +590,20 @@ stretchMeshDeformer::deform( MDataBlock& block,
 	// do this if we are using an OpenMP implementation that is not the same as Maya's.
 	// Even if it is the same, it does no harm to make this call. testing svn on ubuntu
 //	MThreadUtils::syncNumOpenMPThreads();
-	
+
 	MStatus status = MS::kSuccess;
 	MObject thisNode = thisMObject();
-	
+
 	// determine the stretch factor
 	//
 	MDataHandle stretchMeshVersionData = block.inputValue(stretchMeshVersion,&status);
 	McheckErr(status, "Error getting stretchMeshVersion data handle\n");
 	double stretchMeshVers = stretchMeshVersionData.asDouble();
-	
+
 	MDataHandle collisionStepData = block.inputValue(collisionStep,&status);
 	McheckErr(status, "Error getting collisionStep data handle\n");
 	int collisionStep = collisionStepData.asInt();
-	
+
 	MDataHandle iterationsData = block.inputValue(iterations,&status);
 	McheckErr(status, "Error getting iterations data handle\n");
 	int iterations = iterationsData.asInt();
@@ -611,7 +611,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 	MDataHandle collisionsData;
 	collisionsData = block.inputValue(collisions );
 	bool doCollisions = collisionsData.asBool();
-	
+
 	MDataHandle enableScaleSafeHndl;
 	enableScaleSafeHndl = block.inputValue(enableScaleSafe );
 	bool doScaleSafe = enableScaleSafeHndl.asBool();
@@ -631,7 +631,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 		MGlobal::displayError( "Stretch mesh couldn't initialize vertex iterator for output poly mesh: " );
 		return status;
 	}
-	
+
 	MArrayDataHandle weightListHndl = block.inputArrayValue(meanWeightsList, &stat);
 	if(!stat){stat.perror("weights array handle construction failed\n");}
 
@@ -640,7 +640,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 
 	MArrayDataHandle connVrtNrmlOrderListHndl = block.inputArrayValue(connVrtIdNrmlOrderList, &stat);
 	if(!stat){stat.perror("connVrtIdList array handle construction failed\n");}
-	
+
 	MArrayDataHandle b_hndl = block.inputArrayValue(b, &stat);
 	if(!stat){stat.perror("b array handle construction failed\n");}
 
@@ -661,10 +661,10 @@ stretchMeshDeformer::deform( MDataBlock& block,
 
 	MArrayDataHandle attrctrCrvsHndl = block.inputValue(crvAttractorCurve, &stat);
 	if(!stat){stat.perror("attrctrCrvsHndl handle construction failed\n");}
-	
+
 	MArrayDataHandle crvAttrctrStrengthsHndl = block.inputValue(crvAttractorStrength, &stat);
 	if(!stat){stat.perror("crvAttrctrStrengthsHndl handle construction failed\n");}
-	
+
 	MArrayDataHandle cAVrtMultListHndl = block.inputArrayValue(crvAttractorVrtMultList, &stat);
 	if(!stat){stat.perror("attrctrVrtMultList handle construction failed\n");}
 
@@ -682,19 +682,19 @@ stretchMeshDeformer::deform( MDataBlock& block,
 
 	MArrayDataHandle mColliderMultHandle = block.inputValue(mshColliderMult, &stat);
 	if(!stat){stat.perror("mColliderMultHandle handle construction failed\n");}
-	
+
 	MArrayDataHandle mCVrtMultListHndl = block.inputArrayValue(mshColliderVrtMultList, &stat);
 	if(!stat){stat.perror("mCVrtMultListHndl handle construction failed\n");}
-	
+
 	MArrayDataHandle nColliderArrayHandle = block.inputArrayValue(nrbsCollider, &stat);
 	if(!stat){stat.perror("Nurbs collider array handle construction failed\n");}
 
 	MArrayDataHandle pSColliderArrayHandle = block.inputArrayValue(primSphrColliderList, &stat);
 	if(!stat){stat.perror("Primitive sphere collider array handle construction failed\n");}
-	
+
 	MArrayDataHandle pSColliderMultHandle = block.inputValue(primSphrColliderMult, &stat);
 	if(!stat){stat.perror("pSColliderMultHandle handle construction failed\n");}
-	
+
 	MArrayDataHandle pSVrtMultListHndl = block.inputArrayValue(primSphrColliderVrtMultList, &stat);
 	if(!stat){stat.perror("pSVrtMultListHndl handle construction failed\n");}
 
@@ -703,20 +703,20 @@ stretchMeshDeformer::deform( MDataBlock& block,
 
 	MArrayDataHandle pCColliderMultHandle = block.inputValue(primCrvColliderMult, &stat);
 	if(!stat){stat.perror("pCColliderMultHandle handle construction failed\n");}
-	
+
 	MArrayDataHandle cCVrtMultListHndl = block.inputArrayValue(crvColliderVrtMultList, &stat);
 	if(!stat){stat.perror("crvColliderVrtMultList handle construction failed\n");}
 
 	MArrayDataHandle cCRadiusListHndl = block.inputArrayValue(crvColliderRadiusList, &stat);
 	if(!stat){stat.perror("crvColliderRadiusList handle construction failed\n");}
-	
+
 	// determine the envelope (this is a global scale factor)
 	//
 	MDataHandle envData = block.inputValue(envelope,&status);
-	McheckErr(status, "Error getting envelope data handle\n");	
-	double envelope = envData.asFloat();	
+	McheckErr(status, "Error getting envelope data handle\n");
+	double envelope = envData.asFloat();
 	if(envelope == 0.0){return MS::kSuccess;}
-	MPlug colliderDestPlugArray(thisNode, mshCollider); 
+	MPlug colliderDestPlugArray(thisNode, mshCollider);
 	MPlug attractorStrengthPlugArray(thisNode, attrctrStrength);
 	MPlug crvAttractorStrengthPlugArray(thisNode, crvAttractorStrength);
 	MDataHandle cAttractorHandle;
@@ -747,10 +747,10 @@ stretchMeshDeformer::deform( MDataBlock& block,
 	MDataHandle mColliderHandle;
 	MObject mColliderObj;
 	MFnMesh mColliderFn;
-	MPlug mshColliderMultPlugArray(thisNode, mshColliderMult);	
+	MPlug mshColliderMultPlugArray(thisNode, mshColliderMult);
 	// SPhere colliders
-	MPlug sphereColliderDestPlugArray(thisNode, primSphrColliderList ); 
-	MPlug sphereColliderMultPlugArray(thisNode, primSphrColliderMult);	
+	MPlug sphereColliderDestPlugArray(thisNode, primSphrColliderList );
+	MPlug sphereColliderMultPlugArray(thisNode, primSphrColliderMult);
 	MBoundingBox inMeshBoundBox;
 	MVector searchVector;
 	MIntArray connected_vrts;
@@ -771,11 +771,11 @@ stretchMeshDeformer::deform( MDataBlock& block,
 	bool wasExactHit;
 	unsigned int numHits;
 	MPoint closestPoint;
-	MFloatPoint raySource; 
+	MFloatPoint raySource;
 	MVector rayDirVec;
 	MFloatVector rayDir;
 	MMeshIsectAccelParams intersectAccel;
-	MVector conn_pt_t[MAX_NUM_CONN_VRTS];
+	//MVector conn_pt_t[MAX_NUM_CONN_VRTS];
 	MVectorArray vrt_snapshot;
 	MVector currVertSnapshot;
 	MVector curr_pt_t;
@@ -787,22 +787,22 @@ stretchMeshDeformer::deform( MDataBlock& block,
 	unsigned int num_conn_vrts;
 	MPointArray verts;
 	MPlug crvColliderRadiusListPlug(thisNode, crvColliderRadiusList);
-	
-	int conn_vrt_id;
-	int prev_vrt_id;
+
+	//int conn_vrt_id;
+	//int prev_vrt_id;
 
 	MPointArray inputPts;  // The point array that represents the initial position of the points.  It is used to interpolate
 					    // with the resultPts array depending on env/weight values.
-	MPointArray resultPts;  // The point array used throughout the deform method.  
+	MPointArray resultPts;  // The point array used throughout the deform method.
 					     // It's the working copy of the output points ultimately used to set the point positions
 	inputPts.setLength(iter.count());
 	resultPts.setLength(iter.count());
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//                                                                    INITIALIZATION                                                                                     //
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
-	// The following for loop initializes several arrays that represent the array attributes of the SM node (stiffness, 
-	// mean value weights, connected verts, etc).  This is an optimization, creating MArrayDataHandle objects is 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// The following for loop initializes several arrays that represent the array attributes of the SM node (stiffness,
+	// mean value weights, connected verts, etc).  This is an optimization, creating MArrayDataHandle objects is
 	// expensive, so we do it just once, here
 	// Fill arrays representing the attractor strengths and xforms... optimization so we're not checking it later
 	int count = attrctrStrengthsHndl.elementCount();
@@ -815,7 +815,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 		if(attractorStrengthPlug.isConnected()){
 			connectedAttractorIds.push_back(attractorStrengthPlug.logicalIndex());
 		}
-	}	
+	}
 	int lastElementId = -1;
 	if(connectedAttractorIds.size() != 0){ lastElementId = connectedAttractorIds.back(); }
 	vector<double> attractorStrengthArray;
@@ -829,7 +829,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 		}else{
 			attractorStrengthArray.push_back(0.0);
 		}
-		
+
 		status = attrctrXformsHndl.jumpToElement(attrctrItr);
 		if(status){
 			attractorXfmArray.append( attrctrXformsHndl.inputValue().asMatrix());
@@ -838,7 +838,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			attractorXfmArray.append(identity);
 		}
 	}
-	
+
 	// CURVE ATTRACTOR INITIALIZATION
 	count = crvAttrctrStrengthsHndl.elementCount();
 	// fill an array representing the indices of the connected attractors... optimization
@@ -850,7 +850,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 		if(crvAttractorStrengthPlug.isConnected()){
 			connectedCrvAttractorIds.push_back(crvAttractorStrengthPlug.logicalIndex());
 		}
-	}	
+	}
 	int lastCrvAttrctrId = -1;
 	if(connectedCrvAttractorIds.size() != 0){ lastCrvAttrctrId = connectedCrvAttractorIds.back(); }
 	vector<double> crvAttractorStrengthArray;
@@ -863,14 +863,14 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			crvAttractorStrengthArray.push_back(0.0);
 		}
 	}
-	
+
 	cAttractorObjArray.clear();
 	for(int attrctrItr = 0; attrctrItr <  connectedCrvAttractorIds.size(); attrctrItr++){
 		int attractorId = connectedCrvAttractorIds[attrctrItr];
 		attrctrCrvsHndl.jumpToArrayElement(attractorId);
 		cAttractorObjArray.append(attrctrCrvsHndl.inputValue().asNurbsCurveTransformed());
 	}
-	
+
 	// CURVE COLLIDER INITIALIZATION
 	count = pCColliderArrayHandle.elementCount();
 	// fill an array representing the indices of the connected attractors... optimization
@@ -882,7 +882,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 		if(crvColliderPlug.isConnected()){
 			connectedCrvColliderIds.push_back(crvColliderPlug.logicalIndex());
 		}
-	}		
+	}
 	int lastCrvColliderId = -1;
 	if(connectedCrvColliderIds.size() != 0){ lastCrvColliderId = connectedCrvColliderIds.back(); }
 	vector<double> crvColliderMultArray;
@@ -895,7 +895,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			crvColliderMultArray.push_back(1.0);
 		}
 	}
-	
+
 	// CURVE COLLIDER RADIUS INITIALIZATION
 	MPointArray crvColliderRadiusPts;
 	MPoint crvColliderRadiusPt;
@@ -910,8 +910,8 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			continue;
 		}
 		MArrayDataHandle cCRadiusHndl = cCRadiusListHndl.inputValue(&status).child(crvColliderRadius);
-		int radiusCount = cCRadiusHndl.elementCount();
-		
+		//int radiusCount = cCRadiusHndl.elementCount();
+
 		// iterate through the radius list, storing an array of the connected radius IDs
 		MPlug crvColliderRadiusPlug = crvColliderRadiusListPlug.elementByLogicalIndex(colliderItr);
 		crvColliderRadiusPlug = crvColliderRadiusPlug.child(0);
@@ -921,7 +921,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				connectedRadiusIds.push_back(radiusPlugItr);
 			}
 		}
-		
+
 		crvColliderRadiusPts.clear();
 		crvColliderRadiusPts.setLength(connectedRadiusIds.size());
 		for (int radiusItr = 0; radiusItr < connectedRadiusIds.size(); radiusItr++){
@@ -930,13 +930,13 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				MGlobal::displayError(MString("Could not access curve collider radius array element"));
 				continue;
 			}
-			crvColliderRadiusPt.x = cCRadiusHndl.inputValue().asDouble(); crvColliderRadiusPt.y = 0.0; crvColliderRadiusPt.z = 0.0; 
+			crvColliderRadiusPt.x = cCRadiusHndl.inputValue().asDouble(); crvColliderRadiusPt.y = 0.0; crvColliderRadiusPt.z = 0.0;
 			crvColliderRadiusPts[radiusItr] = crvColliderRadiusPt;
 		}
 		crvColliderRadiusPtsArray.push_back(crvColliderRadiusPts);
 	}
-		
-		
+
+
 	// MESH COLLIDER INITIALIZATION (for per-vert mult)
 	count = mColliderArrayHandle.elementCount();
 	// fill an array representing the indices of the connected colliders... optimization
@@ -948,7 +948,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 		if(mshColliderPlug.isConnected()){
 			connectedMshColliderIds.push_back(mshColliderPlug.logicalIndex());
 		}
-	}		
+	}
 	int lastMshColliderId = -1;
 	if(connectedMshColliderIds.size() != 0){ lastMshColliderId = connectedMshColliderIds.back(); }
 	vector<double> mshColliderMultArray;
@@ -961,7 +961,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			mshColliderMultArray.push_back(1.0);
 		}
 	}
-	
+
 	// SHERE COLLIDER INITIALIZATION (for per-vert mult)
 	count = pSColliderArrayHandle.elementCount();
 	// fill an array representing the indices of the connected sphere colliders... optimization
@@ -973,7 +973,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 		if(sphereColliderPlug.isConnected()){
 			connectedSphereColliderIds.push_back(sphereColliderPlug.logicalIndex());
 		}
-	}		
+	}
 	int lastSphereColliderId = -1;
 	if(connectedSphereColliderIds.size() != 0){ lastSphereColliderId = connectedSphereColliderIds.back(); }
 	vector<double> sphereColliderMultArray;
@@ -989,7 +989,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 
 	// Initialize variables containing the connected sphere primitive collider matrices
 //	int spherePrimCount = pSColliderArrayHandle.elementCount();
-	
+
 	vector<smConnectedVerts> connectedVertArray;
 	connectedVertArray.clear();
 	smConnectedVerts currVert;
@@ -1012,7 +1012,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 	vector<smAttractorMults> attractorMultsArray;
 	attractorMultsArray.clear();
 	smAttractorMults currAttractorMult;
-	
+
 	vector<smAttractorMults> crvAttractorMultsArray;
 	crvAttractorMultsArray.clear();
 	smAttractorMults currCrvAttractorMult;
@@ -1024,22 +1024,22 @@ stretchMeshDeformer::deform( MDataBlock& block,
 	vector<smAttractorMults> mshColliderMultsArray;
 	mshColliderMultsArray.clear();
 	smAttractorMults currMshColliderMult;
-	
+
 	vector<smAttractorMults> sphereColliderMultsArray;
 	sphereColliderMultsArray.clear();
 	smAttractorMults currSphereColliderMult;
-	
+
 	vector<smCrvAttractorUV> crvAttractorUVArray;
 	crvAttractorUVArray.clear();
 	smCrvAttractorUV currCrvAttractorUV;
-	
+
 	for (iter.reset(); !iter.isDone(); iter.next()) {
 		int curr_vrt_index = iter.index();
 		pt = iter.position(MSpace::kObject);
 		pt *= inMatrix; //Put point in world space
 		inputPts[iter.index()] = pt;
 		resultPts[iter.index()] = pt;
-		
+
 		status = stfListHndl.jumpToArrayElement(0);
 		if(!status){continue;}
 		MArrayDataHandle stfHndl = stfListHndl.inputValue(&status).child(stiffness);
@@ -1048,12 +1048,12 @@ stretchMeshDeformer::deform( MDataBlock& block,
 		McheckErr(status, "stfHndl handle evaluation failed\n");
 		stiffnessArray.push_back(stfHndl.inputValue(&status).asFloat());
 		McheckErr(status, "Error getting stiffness float value\n");
-		
+
 		status = b_hndl.jumpToElement(curr_vrt_index);
 		McheckErr(status, "b_hndl handle evaluation failed\n");
 		bArray.push_back(b_hndl.inputValue(&status).asDouble());
 		McheckErr(status, "Error getting b value\n");
-		
+
 		currVert.connectedVerts.clear();
 		status = connVrtListHndl.jumpToArrayElement(curr_vrt_index);
 		McheckErr(status, "Jump to array element failed\n");
@@ -1063,8 +1063,8 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			connVrtHndl.jumpToArrayElement( i );
 			currVert.connectedVerts.push_back(connVrtHndl.inputValue().asInt());
 		}
-		connectedVertArray.push_back(currVert);		
-		
+		connectedVertArray.push_back(currVert);
+
 		if(stretchMeshVers >= SM_POLAR_FIX){
 			currVertNrmlOrder.connectedVerts.clear();
 			status = connVrtNrmlOrderListHndl.jumpToArrayElement(curr_vrt_index);
@@ -1077,7 +1077,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			}
 			connectedVertArrayNrmlOrder.push_back(currVertNrmlOrder);
 		}
-		
+
 		currMeanWeight.meanWeights.clear();
 		status = weightListHndl.jumpToArrayElement( curr_vrt_index );
 		McheckErr(status, "Jump to mean weight list array element failed\n");
@@ -1087,8 +1087,8 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			weightHndl.jumpToElement( i );
 			currMeanWeight.meanWeights.push_back(weightHndl.inputValue().asDouble());
 		}
-		meanWeightsArray.push_back(currMeanWeight);		
-		
+		meanWeightsArray.push_back(currMeanWeight);
+
 		currBScalable.bScalable.clear();
 		// check that the bScalable array has actually been populated (won't be the case with older nodes)
 		if(bScalableListHndl.elementCount() > curr_vrt_index){
@@ -1100,9 +1100,9 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				bScalableHndl.jumpToElement( i );
 				currBScalable.bScalable.push_back(bScalableHndl.inputValue().asDouble());
 			}
-			bScalableArray.push_back(currBScalable);	
+			bScalableArray.push_back(currBScalable);
 		}
-		
+
 		currAttractorMult.attractorMults.clear();
 		status = aVrtMultListHndl.jumpToElement(curr_vrt_index);
 		if(status){
@@ -1115,17 +1115,17 @@ stretchMeshDeformer::deform( MDataBlock& block,
 					currAttractorMult.attractorMults.push_back(attrctrMults.inputValue().asDouble());
 				}
 			}
-			attractorMultsArray.push_back(currAttractorMult);						
+			attractorMultsArray.push_back(currAttractorMult);
 		}else{
 			// This is necessary for v1.0... aVrtMultListHndl.jumpToElement() fails if the specific vert
 			// wasn't initialized during the attractor creation
 			for(int attrctrItr = 0; attrctrItr <=  lastElementId; attrctrItr++){
 				currAttractorMult.attractorMults.push_back(0.0);
 			}
-			attractorMultsArray.push_back(currAttractorMult);		
+			attractorMultsArray.push_back(currAttractorMult);
 		}
-		
-		// CURVE ATTRACTORS 
+
+		// CURVE ATTRACTORS
 		currCrvAttractorMult.attractorMults.clear();
 		status = cAVrtMultListHndl.jumpToElement(curr_vrt_index);
 		if(status){
@@ -1138,14 +1138,14 @@ stretchMeshDeformer::deform( MDataBlock& block,
 					currCrvAttractorMult.attractorMults.push_back(crvAttrctrMults.inputValue().asDouble());
 				}
 			}
-			crvAttractorMultsArray.push_back(currCrvAttractorMult);						
+			crvAttractorMultsArray.push_back(currCrvAttractorMult);
 		}else{
 			// This is necessary for v1.0... aVrtMultListHndl.jumpToElement() fails if the specific vert
 			// wasn't initialized during the attractor creation
 			for(int attrctrItr = 0; attrctrItr <=  lastCrvAttrctrId; attrctrItr++){
 				currCrvAttractorMult.attractorMults.push_back(0.0);
 			}
-			crvAttractorMultsArray.push_back(currCrvAttractorMult);		
+			crvAttractorMultsArray.push_back(currCrvAttractorMult);
 		}
 		// CURVE ATTRACTOR ATTACH UV
 		currCrvAttractorUV.attractorUV.clear();
@@ -1160,14 +1160,14 @@ stretchMeshDeformer::deform( MDataBlock& block,
 					currCrvAttractorUV.attractorUV.push_back(cAttachUVHndl.inputValue().asDouble());
 				}
 			}
-			crvAttractorUVArray.push_back(currCrvAttractorUV);						
+			crvAttractorUVArray.push_back(currCrvAttractorUV);
 		}else{
 			// This is necessary for v1.0... aVrtMultListHndl.jumpToElement() fails if the specific vert
 			// wasn't initialized during the attractor creation
 			for(int attrctrItr = 0; attrctrItr <=  lastCrvAttrctrId; attrctrItr++){
 				currCrvAttractorUV.attractorUV.push_back(0.0);
 			}
-			crvAttractorUVArray.push_back(currCrvAttractorUV);		
+			crvAttractorUVArray.push_back(currCrvAttractorUV);
 		}
 		// CURVE COLLIDERS
 		currCrvColliderMult.attractorMults.clear();
@@ -1182,16 +1182,16 @@ stretchMeshDeformer::deform( MDataBlock& block,
 					currCrvColliderMult.attractorMults.push_back(crvColliderMults.inputValue().asDouble());
 				}
 			}
-			crvColliderMultsArray.push_back(currCrvColliderMult);						
+			crvColliderMultsArray.push_back(currCrvColliderMult);
 		}else{
 			// This is necessary for v1.0... aVrtMultListHndl.jumpToElement() fails if the specific vert
 			// wasn't initialized during the attractor creation
 			for(int colliderItr = 0; colliderItr <=  pCColliderArrayHandle.elementCount(); colliderItr++){
 				currCrvColliderMult.attractorMults.push_back(0.0);
 			}
-			crvColliderMultsArray.push_back(currCrvColliderMult);		
+			crvColliderMultsArray.push_back(currCrvColliderMult);
 		}
-	
+
 		// MESH COLLIDERS
 		currMshColliderMult.attractorMults.clear();
 		status = mCVrtMultListHndl.jumpToElement(curr_vrt_index);
@@ -1205,16 +1205,16 @@ stretchMeshDeformer::deform( MDataBlock& block,
 					currMshColliderMult.attractorMults.push_back(mshColliderMults.inputValue().asDouble());
 				}
 			}
-			mshColliderMultsArray.push_back(currMshColliderMult);						
+			mshColliderMultsArray.push_back(currMshColliderMult);
 		}else{
 			// This is necessary for v1.0... aVrtMultListHndl.jumpToElement() fails if the specific vert
 			// wasn't initialized during the attractor creation
 			for(int colliderItr = 0; colliderItr <=  mColliderArrayHandle.elementCount(); colliderItr++){
 				currMshColliderMult.attractorMults.push_back(0.0);
 			}
-			mshColliderMultsArray.push_back(currMshColliderMult);		
+			mshColliderMultsArray.push_back(currMshColliderMult);
 		}
-		
+
 		// SPHERE COLLIDERS
 		currSphereColliderMult.attractorMults.clear();
 		status = pSVrtMultListHndl.jumpToElement(curr_vrt_index);
@@ -1228,84 +1228,84 @@ stretchMeshDeformer::deform( MDataBlock& block,
 					currSphereColliderMult.attractorMults.push_back(sphereColliderMults.inputValue().asDouble());
 				}
 			}
-			sphereColliderMultsArray.push_back(currSphereColliderMult);						
+			sphereColliderMultsArray.push_back(currSphereColliderMult);
 		}else{
 			// This is necessary for v1.0... aVrtMultListHndl.jumpToElement() fails if the specific vert
 			// wasn't initialized during the attractor creation
 			for(int colliderItr = 0; colliderItr <=  pSColliderArrayHandle.elementCount(); colliderItr++){
 				currSphereColliderMult.attractorMults.push_back(0.0);
 			}
-			sphereColliderMultsArray.push_back(currSphereColliderMult);		
+			sphereColliderMultsArray.push_back(currSphereColliderMult);
 		}
-		
+
 	}
-	
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//                                                  0.5  Inflate Colliders, calculate bounding boxes                                                       //
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Determine the bounding box of the input Geometry.  This will be used for collisions
-	//It has to be done here, because we only want to do it once, instead of for each relax 
+	//It has to be done here, because we only want to do it once, instead of for each relax
 	//iteration.
-	MPoint bBoxMin;	
+	MPoint bBoxMin;
 	MPoint bBoxMax;
 	if(mColliderArrayHandle.elementCount() > 0 && doCollisions){
 		//Initialize the min/max storage variables to the first point of the output mesh iterator
 		iter.reset();
 		pt = iter.position(MSpace::kObject);
 		pt *= inMatrix;  //Put point in world space
-		
+
 		bBoxMin = pt;
 		bBoxMax = pt;
 		// iterate through the mesh verts to find the min/max bounding box points
 		for (iter.reset(); !iter.isDone(); iter.next()) {
 			pt = iter.position(MSpace::kObject);
 			pt *= inMatrix; //Put point in world space
-			if(pt.x < bBoxMin.x){bBoxMin.x = pt.x;} 
+			if(pt.x < bBoxMin.x){bBoxMin.x = pt.x;}
 			if(pt.y < bBoxMin.y){bBoxMin.y = pt.y;}
 			if(pt.z < bBoxMin.z){bBoxMin.z = pt.z;}
 
-			if(pt.x > bBoxMax.x){bBoxMax.x = pt.x;} 
-			if(pt.y > bBoxMax.y){bBoxMax.y = pt.y;} 
-			if(pt.z > bBoxMax.z){bBoxMax.z = pt.z;} 
+			if(pt.x > bBoxMax.x){bBoxMax.x = pt.x;}
+			if(pt.y > bBoxMax.y){bBoxMax.y = pt.y;}
+			if(pt.z > bBoxMax.z){bBoxMax.z = pt.z;}
 		}
-		
+
 		// iterate through attractor xforms to expand the min/max bounding box points.
 		for(int j = 0; j < attrctrXformsHndl.elementCount(); j++){
 			attrctrXformsHndl.jumpToArrayElement(j);
 			MMatrix attrctrMat = attrctrXformsHndl.inputValue(&status).asMatrix();
-			if(attrctrMat[3][0] < bBoxMin.x){bBoxMin.x = attrctrMat[3][0];} 
-			if(attrctrMat[3][1] < bBoxMin.y){bBoxMin.y = attrctrMat[3][1];} 
-			if(attrctrMat[3][2] < bBoxMin.z){bBoxMin.z = attrctrMat[3][2];} 
-			
-			if(attrctrMat[3][0] > bBoxMax.x){bBoxMax.x = attrctrMat[3][0];} 
-			if(attrctrMat[3][1] > bBoxMax.y){bBoxMax.y = attrctrMat[3][1];} 
-			if(attrctrMat[3][2] > bBoxMax.z){bBoxMax.z = attrctrMat[3][2];} 
+			if(attrctrMat[3][0] < bBoxMin.x){bBoxMin.x = attrctrMat[3][0];}
+			if(attrctrMat[3][1] < bBoxMin.y){bBoxMin.y = attrctrMat[3][1];}
+			if(attrctrMat[3][2] < bBoxMin.z){bBoxMin.z = attrctrMat[3][2];}
+
+			if(attrctrMat[3][0] > bBoxMax.x){bBoxMax.x = attrctrMat[3][0];}
+			if(attrctrMat[3][1] > bBoxMax.y){bBoxMax.y = attrctrMat[3][1];}
+			if(attrctrMat[3][2] > bBoxMax.z){bBoxMax.z = attrctrMat[3][2];}
 		}
 
 		//resize the bounding box
 		inMeshBoundBox = MBoundingBox(bBoxMin, bBoxMax);
 
-		//we need to "inflate" each collider mesh according to its pad value (we also calculate each collider's 
+		//we need to "inflate" each collider mesh according to its pad value (we also calculate each collider's
 		//min and max point, for use when creating bounding boxes.) We store the inflated mesh in a separate
 		//attribute because we don't want to inflate the input collider mesh every time this deformer is evaluated.
 		clldrMinPts.setLength(mColliderArrayHandle.elementCount());
 		clldrMaxPts.setLength(mColliderArrayHandle.elementCount());
 		for(int clldrItr = 0; clldrItr < mColliderArrayHandle.elementCount(); clldrItr++){
-			//first, make sure this collider attribute is actually connected to something (we don't want to 
-			//bother inflating meshes that were once connected, but have been deleted). 
+			//first, make sure this collider attribute is actually connected to something (we don't want to
+			//bother inflating meshes that were once connected, but have been deleted).
 			clldrDestPlug = colliderDestPlugArray.elementByPhysicalIndex(clldrItr);
 			if(clldrDestPlug.isConnected()){
 				mColliderArrayHandle.jumpToArrayElement(clldrItr);
-				mColliderObj = mColliderArrayHandle.inputValue().asMesh(); 
+				mColliderObj = mColliderArrayHandle.inputValue().asMesh();
 				MItMeshVertex mClldrVrtItr(mColliderObj, &status);
-				
+
 				//get the collider pad value, but first check the array length
 				double colliderPad = 0;
 				if(mColliderPadArrayHandle.elementCount() > clldrItr){
 					mColliderPadArrayHandle.jumpToArrayElement(clldrItr);
 					colliderPad = mColliderPadArrayHandle.inputValue().asDouble();
 				}
-				
+
 				MArrayDataBuilder mClldrInfltdBldr = mColliderInflatedArrayHandle.builder();
 				mClldrInfltdBldr.addElement(clldrItr);
 				mColliderInflatedArrayHandle.set(mClldrInfltdBldr);
@@ -1313,7 +1313,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				mColliderInflatedHandle = mColliderInflatedArrayHandle.inputValue();
 				//Copy the collider mesh from collider attr to colliderInflated attr:
 				mColliderInflatedHandle.copy(mColliderArrayHandle.inputValue());
-				
+
 				mClldrPts.clear();
 				mClldrPts.setLength(mClldrVrtItr.count());
 				clldrMinPts[clldrItr] = mClldrVrtItr.position(MSpace::kWorld);
@@ -1323,8 +1323,8 @@ stretchMeshDeformer::deform( MDataBlock& block,
 					//as we go, because when you modify a point you affect neighboring point normals, which would give
 					//bad results when we inflate those points.
 					mClldrPts[mClldrVrtItr.index()] = mClldrVrtItr.position(MSpace::kWorld);
-					
-					//add pad to the point in the point snapshot array 
+
+					//add pad to the point in the point snapshot array
 					if(colliderPad != 0){
 						mClldrVrtItr.getNormal(mClldrNrml, MSpace::kWorld);
 						mClldrNrml.normalize();
@@ -1333,17 +1333,17 @@ stretchMeshDeformer::deform( MDataBlock& block,
 						mClldrPts[mClldrVrtItr.index()].y += mClldrNrml.y;
 						mClldrPts[mClldrVrtItr.index()].z += mClldrNrml.z;
 					}
-					
+
 					//update min and max points (used for creating bounding boxes)
 					if(mClldrPts[mClldrVrtItr.index()].x < clldrMinPts[clldrItr].x){clldrMinPts[clldrItr].x = mClldrPts[mClldrVrtItr.index()].x;}
 					if(mClldrPts[mClldrVrtItr.index()].y < clldrMinPts[clldrItr].y){clldrMinPts[clldrItr].y = mClldrPts[mClldrVrtItr.index()].y;}
 					if(mClldrPts[mClldrVrtItr.index()].z < clldrMinPts[clldrItr].z){clldrMinPts[clldrItr].z = mClldrPts[mClldrVrtItr.index()].z;}
-					
+
 					if(mClldrPts[mClldrVrtItr.index()].x > clldrMaxPts[clldrItr].x){clldrMaxPts[clldrItr].x = mClldrPts[mClldrVrtItr.index()].x;}
 					if(mClldrPts[mClldrVrtItr.index()].y > clldrMaxPts[clldrItr].y){clldrMaxPts[clldrItr].y = mClldrPts[mClldrVrtItr.index()].y;}
 					if(mClldrPts[mClldrVrtItr.index()].z > clldrMaxPts[clldrItr].z){clldrMaxPts[clldrItr].z = mClldrPts[mClldrVrtItr.index()].z;}
 				}
-				//iterate through the inflated collider points and set positions (see comment above for why we do this)... 
+				//iterate through the inflated collider points and set positions (see comment above for why we do this)...
 				if(colliderPad != 0){
 					mClldrInfltdObj = mColliderInflatedHandle.asMesh();
 					MItMeshVertex mClldrInfltdVrtItr(mClldrInfltdObj, &status);
@@ -1361,8 +1361,8 @@ stretchMeshDeformer::deform( MDataBlock& block,
 	//
 	for ( int i = 0; i < iterations; i++){
 
-		// We want to position each vert simultaneously for each iteration. In other words, after we place vert 0, we want vert 1 to 
-		// "see" the position of vert 0 before it was placed.  So we take a snapshot of all verts at the beginning of each 
+		// We want to position each vert simultaneously for each iteration. In other words, after we place vert 0, we want vert 1 to
+		// "see" the position of vert 0 before it was placed.  So we take a snapshot of all verts at the beginning of each
 		// iteration
 		vrt_snapshot.clear();
 		for (iter.reset(); !iter.isDone(); iter.next()) {
@@ -1372,17 +1372,17 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			vrt_snapshot.append(currVertSnapshot);
 		}
 
-		
+
 		iter.reset();
 		// get all points at once. Faster to query, and also better for
 		// threading than using iterator
 		// -----------------------2008 ---------------------------
 		int nPoints = iter.count();
 		// ---------------------- 2009+ -----------------------
-		
+
 #ifdef _OPENMP
 #pragma omp parallel for
-#endif		
+#endif
 		for ( int vrtItr = 0; vrtItr < nPoints; vrtItr++) {
 			// continue to the next vertex if the weight for this vertex is zero (this is an optimization)
 			double weight = weightValue(block, multiIndex, vrtItr);
@@ -1390,15 +1390,15 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				continue;
 			}
 			int curr_vrt_index = vrtItr;
-			
+
 			MVector currPtT;
 			currPtT.x = resultPts[curr_vrt_index].x;
 			currPtT.y = resultPts[curr_vrt_index].y;
 			currPtT.z = resultPts[curr_vrt_index].z;
-			
+
 			float stiff_curr;
-			// Small hack here... for some reason the stiffness values are not written to disk if they are zero, which will cause 
-			// the call to inputValue to fail.  So we first check the element count, if it's zero, we assume the stiffness value is 
+			// Small hack here... for some reason the stiffness values are not written to disk if they are zero, which will cause
+			// the call to inputValue to fail.  So we first check the element count, if it's zero, we assume the stiffness value is
 			// zero.
 			if (stfListHndl.elementCount() == 0){
 				stiff_curr = 0.0;
@@ -1413,10 +1413,10 @@ stretchMeshDeformer::deform( MDataBlock& block,
 
 			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			//                                                   1. Compute the current normal n at v                                                                      //
-			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
+			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			unsigned int numConnVrts;
 			numConnVrts = connectedVertArray[curr_vrt_index].connectedVerts.size();
-			
+
 			// populate array containing translation of connected verts and translation of the connected verts, and calculate the avg
 			// of the connected verts, the "l" term in the paper
 			//
@@ -1436,7 +1436,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				connPtAvg.y = connPtAvg.y + conn_pt.y;
 				connPtAvg.z = connPtAvg.z + conn_pt.z;
 			}
-			
+
 			connPtAvg.x = connPtAvg.x/numConnVrts;
 			connPtAvg.y = connPtAvg.y/numConnVrts;
 			connPtAvg.z = connPtAvg.z/numConnVrts;
@@ -1446,7 +1446,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			currNrml.y = 0.0;
 			currNrml.z = 0.0;
 			for(j=0; j < numConnVrts; j++){
-				// Changes to the deformer were made in order to fix degenerate vertices in certain cases.  
+				// Changes to the deformer were made in order to fix degenerate vertices in certain cases.
 				// Because of this change, we now have to maintain code to compute "legacy" SM nodes (those
 				// created before vers SM_POLAR_FIX
 				if(stretchMeshVers >= SM_POLAR_FIX){
@@ -1461,7 +1461,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				vec1.y = vrt_snapshot[connVrtId].y;
 				vec1.z = vrt_snapshot[connVrtId].z;
 				vec1 = vec1 - connPtAvg;
-				
+
 				if(stretchMeshVers >= SM_POLAR_FIX){
 					connVrtId = connectedVertArrayNrmlOrder[curr_vrt_index].connectedVerts[j];
 				}else{
@@ -1471,24 +1471,24 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				vec2.y = vrt_snapshot[connVrtId].y;
 				vec2.z = vrt_snapshot[connVrtId].z;
 				vec2 = vec2 - connPtAvg;
-				
+
 				currNrml = currNrml + (vec1^vec2);
 			}
 			currNrml = currNrml/currNrml.length();
-			
+
 			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			//                                                   2. compute the "d" term in the definition of the projection plane                             //
-			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
+			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			double d;
 			d = 0.0;
 			for(j=0; j < numConnVrts; j++){
 				d = d + currNrml*connPtT[j];
 			}
 			d = -d/numConnVrts;
-			
+
 			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			//                                                   3. determine v_prime                                                                                              //
-			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
+			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			MVector v_prime;
 			v_prime.x = 0.0;
 			v_prime.y = 0.0;
@@ -1498,17 +1498,17 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				weight_curr = meanWeightsArray[curr_vrt_index].meanWeights[j];
 				v_prime = v_prime + weight_curr*(connPtT[j] - (d + (connPtT[j]*currNrml))*currNrml);
 			}
-			
+
 			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			//                                                   4. Determine v from v_prime                                                                                   //
-			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
-		
-			
+			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 			MVector v;
 			v.x = 0.0;
 			v.y = 0.0;
 			v.z = 0.0;
-			
+
 			if(doScaleSafe){
 				// Calculate v from v_prime using the scalable algorithm ....
 				// if the bScalableArray is empty, this must be an old (1.0) sm node, so ScaleSafe mode will be invalid
@@ -1518,13 +1518,13 @@ stretchMeshDeformer::deform( MDataBlock& block,
 											+ MString("please recreate the stretchMesh deformer with version 1.5 or later.  Exiting"));
 					return MStatus::kFailure;
 				}
-				
-				// Populate an array containing the connected verts projected to the projection plane. 
+
+				// Populate an array containing the connected verts projected to the projection plane.
 				MVector conn_pt_prj_t[MAX_NUM_CONN_VRTS];
 				for(j=0; j < numConnVrts; j++){
 					conn_pt_prj_t[j] = connPtT[j] - (d + (connPtT[j]*currNrml))*currNrml;
 				}
-				
+
 				MVector vPrimeToV;
 				for(j=0; j< numConnVrts; j++){
 					MVector connToVPrime = v_prime - conn_pt_prj_t[j];
@@ -1537,13 +1537,13 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				b_curr = bArray[curr_vrt_index];
 				v = v_prime + b_curr*currNrml;
 			}
-			
+
 			// The final position of the vertex is a blend between v and the initial position according to the stiffness value.
 			MVector v_to_curr;
 			v_to_curr = currPtT - v;
 
 			// Uncomment the two lines below to use the deformer's weight value instead of the stiffness
-			// attribute.  This allows the user to do attribute painting on the weight value. 
+			// attribute.  This allows the user to do attribute painting on the weight value.
 			// stiff_curr = weightValue(block, multiIndex, curr_vrt_index);
 			// stiff_curr = 1 - stiff_curr;
 			v = v + stiff_curr*v_to_curr;
@@ -1554,24 +1554,24 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			currPt.z = v.z;
 			resultPts[curr_vrt_index] = currPt;
 		}
-		
-		
+
+
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//                                                    5. Attractors                                                                                                            //
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// 5. For each vertex, find the connected attractors, determine the average attractor vector using a weighted
-		// average of the attractor positions times the attractor strength, then find the final position of the vert by adding 
+		// average of the attractor positions times the attractor strength, then find the final position of the vert by adding
 		// the connected attractor influence vectors.
 		//
 #ifdef _OPENMP
 #pragma omp parallel for
-#endif		
-		for (  int vrtItr = 0; vrtItr < nPoints; vrtItr++) {			
+#endif
+		for (  int vrtItr = 0; vrtItr < nPoints; vrtItr++) {
 			int curr_vrt_index = vrtItr;
-			
+
 			// Determine the sum of the strength of all connected attractors:
 			double attrctrStrengthSum = 0;
-			
+
 			for(int attrctrItr = 0; attrctrItr <  connectedAttractorIds.size(); attrctrItr++){
 				int attractorId = connectedAttractorIds[attrctrItr];
 				attrctrStrengthSum = attrctrStrengthSum + (attractorMultsArray[curr_vrt_index].attractorMults[attractorId] * attractorStrengthArray[attractorId]);
@@ -1581,12 +1581,12 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				int attractorId = connectedCrvAttractorIds[attrctrItr];
 				attrctrStrengthSum = attrctrStrengthSum + (crvAttractorMultsArray[curr_vrt_index].attractorMults[attractorId] * crvAttractorStrengthArray[attractorId]);
 			}
-			
-			if(attrctrStrengthSum < 1){ 
+
+			if(attrctrStrengthSum < 1){
 				attrctrStrengthSum = 1.0;
 			}
-			
-			// Start adding the attractor positions (scaled by the strength value) to the current vert position, 
+
+			// Start adding the attractor positions (scaled by the strength value) to the current vert position,
 			// Get the xyz coords of the vertex
 			MVector currPtT;
 			currPtT.x = resultPts[curr_vrt_index].x;
@@ -1596,12 +1596,12 @@ stretchMeshDeformer::deform( MDataBlock& block,
 			vec_sum.x = 0;
 			vec_sum.y = 0;
 			vec_sum.z = 0;
-			
+
 			// loop through the point attractors
 			for(int attrctrItr = 0; attrctrItr <  connectedAttractorIds.size(); attrctrItr++){
 				int attractorId = connectedAttractorIds[attrctrItr];
 				double strengthMult = attractorMultsArray[curr_vrt_index].attractorMults[attractorId];
-				
+
 				double strength = attractorStrengthArray[attractorId];
 				strength = strength * strengthMult;
 				if(strength == 0.0){continue;}
@@ -1609,7 +1609,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				double x = attractorXfmArray[attractorId][3][0];
 				double y = attractorXfmArray[attractorId][3][1];
 				double z = attractorXfmArray[attractorId][3][2];
-			
+
 				MVector vec;
 				vec.x = x - currPtT.x;
 				vec.y = y - currPtT.y;
@@ -1617,8 +1617,8 @@ stretchMeshDeformer::deform( MDataBlock& block,
 
 				// try and get a more linear response to the muscle. Coming up with vec_scale was
 				// a lot of trial and error.  Basically the idea is that you want an attractor with a strength
-				// of 0.5 to result in a vertex thfffat is roughly halfway between its starting position and the 
-				// attractor.  You should get this behavior regardless of the number of iterations. 
+				// of 0.5 to result in a vertex thfffat is roughly halfway between its starting position and the
+				// attractor.  You should get this behavior regardless of the number of iterations.
 				// vec_scale*vec essentially results in the same length vector for each iteration.
 				// first, check that iterations are not zero
 				if(iterations != 0){
@@ -1632,48 +1632,48 @@ stretchMeshDeformer::deform( MDataBlock& block,
 					// One more thing to try... bias the early iterations more heavily, so that the attractor
 					// effect has a chance to progagate further across the surface.  This should really be done
 					// as a weighted avg rather than a linear interpolation.
-					vec_sum = vec_sum + vec_scale*vec;	
+					vec_sum = vec_sum + vec_scale*vec;
 				}
 			}
-			
+
 			// loop through the curve attractors
 			for(int attrctrItr = 0; attrctrItr <  connectedCrvAttractorIds.size(); attrctrItr++){
 				int attractorId = connectedCrvAttractorIds[attrctrItr];
 				double strengthMult = crvAttractorMultsArray[curr_vrt_index].attractorMults[attractorId];
-				
+
 				double strength = crvAttractorStrengthArray[attractorId];
 				strength = strength * strengthMult;
 				if(strength == 0.0){continue;}
-				
+
 //				attrctrCrvsHndl.jumpToArrayElement(attractorId);
 //				cAttractorHandle = attrctrCrvsHndl.inputValue();
-//				cAttractorObj = cAttractorHandle.asNurbsCurveTransformed();  
+//				cAttractorObj = cAttractorHandle.asNurbsCurveTransformed();
 				MFnNurbsCurve cAttractorFn;
 				status = cAttractorFn.setObject(cAttractorObjArray[attractorId]);
 				MPoint closestPt;
-				double param;
+				//double param;
 				double attachUV = crvAttractorUVArray[curr_vrt_index].attractorUV[attractorId];
 				status = cAttractorFn.getPointAtParam(attachUV, closestPt, MSpace::kObject);
 				//closestPt = cAttractorFn.closestPoint(resultPts[curr_vrt_index], &param, 0.0001, MSpace::kObject, &status);
 				if(!status){
 					MGlobal::displayInfo("Error...");
-					status.perror("couldn't get closest point to curve"); 
+					status.perror("couldn't get closest point to curve");
 					//return status;
 				}
-				
+
 				double x = closestPt.x;
 				double y = closestPt.y;
 				double z = closestPt.z;
-				
+
 				MVector vec;
 				vec.x = x - currPtT.x;
 				vec.y = y - currPtT.y;
 				vec.z = z - currPtT.z;
-				
+
 				// try and get a more linear response to the muscle. Coming up with vec_scale was
 				// a lot of trial and error.  Basically the idea is that you want an attractor with a strength
-				// of 0.5 to result in a vertex thfffat is roughly halfway between its starting position and the 
-				// attractor.  You should get this behavior regardless of the number of iterations. 
+				// of 0.5 to result in a vertex thfffat is roughly halfway between its starting position and the
+				// attractor.  You should get this behavior regardless of the number of iterations.
 				// vec_scale*vec essentially results in the same length vector for each iteration.
 				// first, check that iterations are not zero
 				if(iterations != 0){
@@ -1687,55 +1687,55 @@ stretchMeshDeformer::deform( MDataBlock& block,
 					// One more thing to try... bias the early iterations more heavily, so that the attractor
 					// effect has a chance to progagate further across the surface.  This should really be done
 					// as a weighted avg rather than a linear interpolation.
-					vec_sum = vec_sum + vec_scale*vec;	
+					vec_sum = vec_sum + vec_scale*vec;
 				}
-			}			
- 
+			}
+
 			MPoint currPt;
 			currPt.x = currPtT.x + vec_sum.x;
 			currPt.y = currPtT.y + vec_sum.y;
 			currPt.z = currPtT.z + vec_sum.z;
 			resultPts[curr_vrt_index] = currPt;
 		}
-		
-	
-		
+
+
+
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//                                                   6. Collisions.                                                                                                            //
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//First we check if the collisions switch is on.  If not, we don't do any collision calculations. Also check the 
+		//First we check if the collisions switch is on.  If not, we don't do any collision calculations. Also check the
 		//collisionStep attribute, we only do collisions every <collisionStep> iterations, but we always do collisions
-		//on the first and last step (this guarantees that the points end up completely outside the collider, 
+		//on the first and last step (this guarantees that the points end up completely outside the collider,
 		//and not relaxed inside).
 		if(doCollisions && ((i % collisionStep == 0) || (i == iterations - 1))){
-			// Check to see if vertices are inside of any of the mesh collider objects.  If so, push them out. 
+			// Check to see if vertices are inside of any of the mesh collider objects.  If so, push them out.
 			for (int collider_itr = 0; collider_itr < mColliderInflatedArrayHandle.elementCount(); collider_itr++){
 				mColliderInflatedArrayHandle.jumpToArrayElement(collider_itr);
 				clldrDestPlug = colliderDestPlugArray.elementByPhysicalIndex(collider_itr);
 				//bail out if this plug isn't connected to anything, we don't want to perform collision calcutions
-				//on collision objects that were connected and then deleted from the mshCollider attribute. 
+				//on collision objects that were connected and then deleted from the mshCollider attribute.
 				if(!clldrDestPlug.isConnected()){ continue; }
 
 				// Determine the search radius:
-				// searchRadius = collider.boundingBox + mesh.boundingBox 
+				// searchRadius = collider.boundingBox + mesh.boundingBox
 				colliderBoundBox = MBoundingBox(clldrMinPts[collider_itr], clldrMaxPts[collider_itr]);
-								
-				//if the collider and inMesh bounding boxes don't intersect, we can bail out, 
-				//we don't do any collisions in this case. 
+
+				//if the collider and inMesh bounding boxes don't intersect, we can bail out,
+				//we don't do any collisions in this case.
 				if(!colliderBoundBox.intersects(inMeshBoundBox)){ continue; }
-				
+
 				searchVector.x = colliderBoundBox.width(); searchVector.y = colliderBoundBox.height(); searchVector.z = colliderBoundBox.depth();
-				searchVector.x += inMeshBoundBox.width(); searchVector.y += inMeshBoundBox.height(); searchVector.z += inMeshBoundBox.depth();				
-				searchRadius = searchVector.length(); 
+				searchVector.x += inMeshBoundBox.width(); searchVector.y += inMeshBoundBox.height(); searchVector.z += inMeshBoundBox.depth();
+				searchRadius = searchVector.length();
 
 				mColliderHandle = mColliderInflatedArrayHandle.inputValue();
-				mColliderObj = mColliderHandle.asMeshTransformed();  
+				mColliderObj = mColliderHandle.asMeshTransformed();
 				status = mColliderFn.setObject(mColliderObj);
 				MMeshIntersector mIntersector;
 				mIntersector.create(mColliderObj);
 				McheckErr(status, "Error getting collider MFnMesh");
 				intersectAccel = mColliderFn.autoUniformGridParams();
-				
+
 				if( !mColliderObj.isNull() ){
 					for( vertIter.reset(); !vertIter.isDone(); vertIter.next() ) {
 						int curr_vrt_index = vertIter.index();
@@ -1743,7 +1743,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 						if(mshColliderMultsArray[curr_vrt_index].attractorMults[collider_itr] == 0){
 							continue;
 						}
-						
+
 						pt = resultPts[curr_vrt_index];
 						raySource.x = pt.x; raySource.y = pt.y; raySource.z = pt.z;
 						vertIter.getNormal(rayDirVec, MSpace::kWorld);
@@ -1752,12 +1752,12 @@ stretchMeshDeformer::deform( MDataBlock& block,
 						// to reduce the occurance of single hits being seen as two hits by allIntersections(), we scale the rayDir
 						// by the search radius.  this will affect the tolerance used in combining double hits (see allIntersections() docs)
 						rayDir = rayDir*searchRadius;
-																	
+
 						// Determine if the point is inside the collider mesh, and get the hit points
 						hitPoints.clear();
 						mColliderFn.allIntersections(raySource, rayDir, NULL, NULL, false,  MSpace::kWorld, searchRadius, false, &intersectAccel, true, hitPoints, NULL, NULL, NULL, NULL, NULL, 0.000001f, &stat);
 						numHits = hitPoints.length();
-						
+
 						// If the number of mesh intersections is odd, the point is inside the mesh and needs to be pushed out.
 						if((numHits % 2) == 1){
 							// Get the closest intersection and set the point to that.
@@ -1767,13 +1767,13 @@ stretchMeshDeformer::deform( MDataBlock& block,
 							closestPoint = ptOnMesh.getPoint();
 							// if the vert multiplier for this vert is not 1.0, we need to interpolate between the starting position, and the collision point
 							if(mshColliderMultsArray[curr_vrt_index].attractorMults[collider_itr] != 1.0){
-								
+
 								// get the vector from the starting position to the collision point
 								MVector initialToCollided;
 								initialToCollided.x = closestPoint.x - resultPts[curr_vrt_index].x;
 								initialToCollided.y = closestPoint.y - resultPts[curr_vrt_index].y;
 								initialToCollided.z = closestPoint.z - resultPts[curr_vrt_index].z;
-								
+
 								// get the length of the vector
 								float distToCollided = initialToCollided.length();
 								// normalize the vector
@@ -1790,8 +1790,8 @@ stretchMeshDeformer::deform( MDataBlock& block,
 				}
 			}
 
-		
-			//  Check to see if vertices are inside of any of the nurbs collider objects.  If so, push them out. 
+
+			//  Check to see if vertices are inside of any of the nurbs collider objects.  If so, push them out.
 			for (int collider_itr = 0; collider_itr < nColliderArrayHandle.elementCount(); collider_itr++){
 				nColliderArrayHandle.jumpToArrayElement(collider_itr);
 				nColliderHandle = nColliderArrayHandle.inputValue();
@@ -1803,7 +1803,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 						pt = resultPts[vertIter.index()];
 						vertIter.getNormal(rayDirVec, MSpace::kWorld);
 						rayDirVec.normalize();
-						
+
 						// Determine if the point is inside the collider surface, and get the hit points
 						nHitPoints.clear();
 						nColliderFn.intersect(pt, rayDirVec, intersectUArray, intersectVArray, nHitPoints, 1e-6, MSpace::kWorld, false, &intersectDistances, false, &wasExactHit, &stat );
@@ -1819,32 +1819,32 @@ stretchMeshDeformer::deform( MDataBlock& block,
 					}
 				}
 			}
-			
+
 			// Process the primitive sphere colliders
 			for (int collider_itr = 0; collider_itr < connectedSphereColliderIds.size(); collider_itr++){
 				pSColliderArrayHandle.jumpToElement(connectedSphereColliderIds[collider_itr]);
 				pColliderHandle = pSColliderArrayHandle.inputValue();
 				clldrXform = pColliderHandle.asMatrix();
 				MMatrix clldrXformInverse = clldrXform.inverse();
-					
+
 				int numVerts = vertIter.count();
 #ifdef _OPENMP
 #pragma omp parallel for
-#endif		
+#endif
 				for( int vrtItr = 0; vrtItr < numVerts; vrtItr++ ) {
 					int curr_vrt_index = vrtItr;
 					//optimization: if the vert mult for this vertex is zero, we can continue
 					if(sphereColliderMultsArray[curr_vrt_index].attractorMults[collider_itr] == 0){
 						continue;
 					}
-					
+
 					// determine the distance between the current vert and the current collider.  If it's less than the radius, push the vert
-					// out along the vector from the collider to the vert. 
+					// out along the vector from the collider to the vert.
 					MPoint currPoint;
 					currPoint = resultPts[vrtItr];
 					// need to put the pt in the space of the collider xform:
 					currPoint = currPoint*clldrXformInverse;
-										
+
 					MVector colliderToPt;
 					colliderToPt.x = currPoint.x;
 					colliderToPt.y = currPoint.y;
@@ -1860,16 +1860,16 @@ stretchMeshDeformer::deform( MDataBlock& block,
 						resultPoint.y = colliderToPt.y;
 						resultPoint.z = colliderToPt.z;
 						resultPoint = resultPoint*clldrXform;
-						
+
 						// if the vert multiplier for this vert is not 1.0, we need to interpolate between the starting position, and the collision point
 						if(sphereColliderMultsArray[curr_vrt_index].attractorMults[collider_itr] != 1.0){
-							
+
 							// get the vector from the starting position to the collision point
 							MVector initialToCollided;
 							initialToCollided.x = resultPoint.x - resultPts[curr_vrt_index].x;
 							initialToCollided.y = resultPoint.y - resultPts[curr_vrt_index].y;
 							initialToCollided.z = resultPoint.z - resultPts[curr_vrt_index].z;
-							
+
 							// get the length of the vector
 							float distToCollided = initialToCollided.length();
 							// normalize the vector
@@ -1880,32 +1880,32 @@ stretchMeshDeformer::deform( MDataBlock& block,
 							resultPoint.y = resultPts[curr_vrt_index].y + initialToCollided.y;
 							resultPoint.z = resultPts[curr_vrt_index].z + initialToCollided.z;
 						}
-						
+
 						resultPts[vrtItr] = resultPoint;
 					}
 				}
 			}
-			
+
 			// Process the primitive curve colliders
 			for (int collider_itr = 0; collider_itr < connectedCrvColliderIds.size(); collider_itr++){
 				pCColliderArrayHandle.jumpToElement(connectedCrvColliderIds[collider_itr]);
 				cColliderHandle = pCColliderArrayHandle.inputValue();
-				cColliderObj = cColliderHandle.asNurbsCurveTransformed();  
+				cColliderObj = cColliderHandle.asNurbsCurveTransformed();
 
 				MFnNurbsCurve cColliderFn(cColliderObj, &status);
 				if(!status){MGlobal::displayError(MString("Could not initialize MFnNurbsCurve for curve collider."));}
-				
+
 				unsigned numSpans;
 				numSpans = cColliderFn.numSpans(&status);
 				if(!status){MGlobal::displayError(MString("Could not get number of spans on collider curve."));}
-				
+
 				int nPoints = vertIter.count();
 //#ifdef _OPENMP
 //#pragma omp parallel for
-//#endif		
+//#endif
 				for( int vrtItr = 0; vrtItr < nPoints; vrtItr++ ) {
 					// determine the distance between the current vert and the current collider.  If it's less than the radius, push the vert
-					// out along the vector from the collider to the vert. 
+					// out along the vector from the collider to the vert.
 					int curr_vrt_index = vrtItr;
 					//optimization: if the vert mult for this vertex is zero, we can continue
 					if(crvColliderMultsArray[curr_vrt_index].attractorMults[collider_itr] == 0){
@@ -1932,7 +1932,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 						colliderScale = crvColliderRadiusPt.x;
 					}
 					//colliderScale = crvColliderRadiusArray[collider_itr].colliderRadius[0];
-					
+
 					if(distanceToCollider < (colliderScale*crvColliderMultsArray[curr_vrt_index].attractorMults[collider_itr])){
 						colliderToPt.normalize();
 						colliderToPt = colliderToPt*(colliderScale*crvColliderMultsArray[curr_vrt_index].attractorMults[collider_itr]);
@@ -1940,24 +1940,24 @@ stretchMeshDeformer::deform( MDataBlock& block,
 						collidedPt.x = closestPt.x + colliderToPt.x;
 						collidedPt.y = closestPt.y + colliderToPt.y;
 						collidedPt.z = closestPt.z + colliderToPt.z;
-						
+
 						resultPts[curr_vrt_index] = collidedPt;
 					}
 				}
 			}
-			
+
 
 		}
 
 	}
-//	timer.endTimer(); 
+//	timer.endTimer();
 //	MGlobal::displayInfo(MString("Runtime for threaded loop: ") + timer.elapsedTime());
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//                           7. Set final point positions using envelope and weight attributes to blend                                       //
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	for (iter.reset(); !iter.isDone(); iter.next()) {
-		// scale the result vector by evelope*weight (the if statement is just a speed optimization 
+		// scale the result vector by evelope*weight (the if statement is just a speed optimization
 		// so you don't do the matrix math if the envelope/weight values are 1.0)
 		double weight = weightValue(block, multiIndex, iter.index());
 		if(envelope != 1.0 || weight != 1.0){
@@ -1976,7 +1976,7 @@ stretchMeshDeformer::deform( MDataBlock& block,
 		//------------------------ Maya 2008 -------------------------
 		iter.setPosition(pt, MSpace::kObject);
 	}
-	
+
 	//------------------------ Maya 2009+ -------------------------
 //	iter.setAllPositions(resultPts, MSpace::kObject);
 
@@ -1991,7 +1991,7 @@ MStatus stretchMeshDeformer::Register(MFnPlugin& ioPlugin, bool pLicensed)
 	MStatus status = ioPlugin.registerNode(MAYA_stretchMeshDEFORMER_NAME, id, &creator,
 		&initialize, MPxNode::kDeformerNode );
 
-	if (MFAIL(status)) 
+	if (MFAIL(status))
 		return MReturnStatus(status, "Failed to register " MAYA_stretchMeshDEFORMER_NAME " deformer");
 	else
 	{
@@ -2009,7 +2009,7 @@ MStatus stretchMeshDeformer::Deregister(MFnPlugin& ioPlugin)
 {
 	MStatus status = ioPlugin.deregisterNode(id);
 
-	if (MFAIL(status)) 
+	if (MFAIL(status))
 		return MReturnStatus(status, "Failed to deregister " MAYA_stretchMeshDEFORMER_NAME " deformer");
 	else
 	{
@@ -2024,11 +2024,11 @@ MStatus stretchMeshDeformer::Deregister(MFnPlugin& ioPlugin)
 MVector stretchMeshDeformer::project_vrt_to_plane(MVector vrt, MVector normal, double d)
 {
 	MVector result;
-	// To find the closest point on the plane to vrt, first I construct a line going through vrt and 
+	// To find the closest point on the plane to vrt, first I construct a line going through vrt and
 	// (vrt+normal).  Then I find the intersection between the line and the plane.  I'm sure there
 	// is a way to find the closest point directly, but this hack works for now...
 	MVector vrt2(vrt.x + normal.x, vrt.y + normal.y, vrt.z + normal.z);
-	
+
 	// The line is defined by P = P1 + u(P2-P1), we determine the u that gives us the plane intersection point...
 	double numerator = normal.x*vrt.x + normal.y*vrt.y + normal.z*vrt.z + d;
 	double denominator = normal.x*(vrt.x-vrt2.x) + normal.y*(vrt.y-vrt2.y) + normal.z*(vrt.z-vrt2.z);
@@ -2036,7 +2036,7 @@ MVector stretchMeshDeformer::project_vrt_to_plane(MVector vrt, MVector normal, d
 	result.x = vrt.x + u*(vrt2.x -vrt.x);
 	result.y = vrt.y + u*(vrt2.y -vrt.y);
 	result.z = vrt.z + u*(vrt2.z -vrt.z);
-	
+
 	return result;
 }
 
@@ -2047,7 +2047,7 @@ MStatus stretchMeshDeformer::connectionMade(const MPlug& inPlug, const MPlug& in
 {
 	MStatus result = MPxDeformerNode::connectionMade(inPlug, inOtherPlug, inAsSrc);
 	MObject attractorObj = inOtherPlug.node();
-	
+
 	// See if "paintTrans" attribute was (re)connected. If so, update "paintWeights"
 	if (!inAsSrc && inPlug==stretchMeshDeformer::attrPaintTrans)
 	{
@@ -2099,7 +2099,7 @@ void stretchMeshDeformer::sAttrChangedCallback(MNodeMessage::AttributeMessage in
 //
 void stretchMeshDeformer::AttrChangedCallback(MNodeMessage::AttributeMessage inMsg, MPlug& ioPlug, MPlug& ioOtherPlug)
 {
-	if (inMsg & MNodeMessage::kAttributeSet) 
+	if (inMsg & MNodeMessage::kAttributeSet)
 	{
 		if (ioPlug==stretchMeshDeformer::attrPaintWeights)
 		{
@@ -2110,7 +2110,7 @@ void stretchMeshDeformer::AttrChangedCallback(MNodeMessage::AttributeMessage inM
 			// Painting influence objects
 			MPlugArray connections;
 			paintTransPlug.connectedTo(connections, true, false);
-			
+
 			uint logicalInfluenceIndex;
 			uint influenceType;
 			if (connections.length()==1 && MS::kSuccess==FindInfluenceObjectIndex(connections[0].node(), logicalInfluenceIndex, influenceType))
@@ -2131,7 +2131,7 @@ MStatus stretchMeshDeformer::FindInfluenceObjectIndex(const MObject& inInfluence
 	MObject thisMObj = thisMObject();
 	//First, look for the influence object among the curve attractors.
 	MPlug influenceList(thisMObj, stretchMeshDeformer::crvAttractorStrength);	// Get "matrix" attribute
-	
+
 	MPlugArray connections;
 	for (uint i=0, n=influenceList.numElements(); i<n; ++i)
 	{
@@ -2145,10 +2145,10 @@ MStatus stretchMeshDeformer::FindInfluenceObjectIndex(const MObject& inInfluence
 		}
 	}
 
-	//If we've gotten here, we didn't find the attractor in the curve/point attractor list, 
+	//If we've gotten here, we didn't find the attractor in the curve/point attractor list,
 	//so we search for it in the curve collider list
 	MPlug crvCInfluenceList(thisMObj, stretchMeshDeformer::primCrvColliderMult);	// Get "matrix" attribute
-	
+
 	for (uint i=0, n=crvCInfluenceList.numElements(); i<n; ++i)
 	{
 		MPlug influencePlug = crvCInfluenceList[i];
@@ -2160,11 +2160,11 @@ MStatus stretchMeshDeformer::FindInfluenceObjectIndex(const MObject& inInfluence
 			return MS::kSuccess;
 		}
 	}
-	
-	//If we've gotten here, we didn't find the attractor in the curve/point attractor list or the curve collider list, 
+
+	//If we've gotten here, we didn't find the attractor in the curve/point attractor list or the curve collider list,
 	//so we search for it in the mesh collider list
 	MPlug mshCInfluenceList(thisMObj, stretchMeshDeformer::mshColliderMult);	// Get "meshColliderMult" attribute
-	
+
 	for (uint i=0, n=mshCInfluenceList.numElements(); i<n; ++i)
 	{
 		MPlug influencePlug = mshCInfluenceList[i];
@@ -2176,8 +2176,8 @@ MStatus stretchMeshDeformer::FindInfluenceObjectIndex(const MObject& inInfluence
 			return MS::kSuccess;
 		}
 	}
-	
-	//If we've gotten here, we didn't find the attractor in the curve/point attractor list or the curve collider list, 
+
+	//If we've gotten here, we didn't find the attractor in the curve/point attractor list or the curve collider list,
 	//so we search for it in the point collider list
 	MPlug sphereCInfluenceList(thisMObj, stretchMeshDeformer::primSphrColliderMult);	// Get "meshColliderMult" attribute
 	for (uint i=0, n=sphereCInfluenceList.numElements(); i<n; ++i)
@@ -2191,11 +2191,11 @@ MStatus stretchMeshDeformer::FindInfluenceObjectIndex(const MObject& inInfluence
 			return MS::kSuccess;
 		}
 	}
-	
-	//If we've gotten here, we didn't find the attractor in the curve attractor list, 
+
+	//If we've gotten here, we didn't find the attractor in the curve attractor list,
 	//so we search for it in the point attractor list
 	MPlug ptInfluenceList(thisMObj, stretchMeshDeformer::attrWorldMatrixList);	// Get "matrix" attribute
-	
+
 	for (uint i=0, n=ptInfluenceList.numElements(); i<n; ++i)
 	{
 		MPlug influencePlug = ptInfluenceList[i];
@@ -2207,8 +2207,8 @@ MStatus stretchMeshDeformer::FindInfluenceObjectIndex(const MObject& inInfluence
 			return MS::kSuccess;
 		}
 	}
-	
-	
+
+
 	return MS::kFailure;
 }
 
@@ -2226,13 +2226,13 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 	MPlug crvColliderMultList(this_mobj, stretchMeshDeformer::crvColliderVrtMultList);
 	MPlug mshColliderMultList(this_mobj, stretchMeshDeformer::mshColliderVrtMultList);
 	MPlug sphereColliderMultList(this_mobj, stretchMeshDeformer::primSphrColliderVrtMultList);
-	
+
 	// Clear output. Cannot reserve :(
 	outWeights.setLength(0);
-	
+
 	double mult;
 
-	// influenceType == 1 for a point attractor, influenceType == 2 for a curve attractor, 
+	// influenceType == 1 for a point attractor, influenceType == 2 for a curve attractor,
 	// influenceType == 3 for a curve collider,  influenceType == 4 for a mesh collider
 	// influenceType == 5 for a primitive sphere collider
 	if(influenceType == 2){
@@ -2247,13 +2247,13 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 			if (MFAIL(status))
 				continue;
 
-			// Find weight for logical index <inInfluenceObjectIndex>. 
+			// Find weight for logical index <inInfluenceObjectIndex>.
 
 			// We could be doing 3 things here:
 			// 1) Call vtxMultList.getExistingArrayAttributeIndices() and check
 			//    whether <inInfluenceObjectIndex> is in the list. BUT THIS DOES NOT SEEM TO WORK!
 			// 2) Use the magic MPlug::selectAncestorLogicalIndex() function, which seems
-			//    most efficient, but doesn't work as querying unknown logical indices will 
+			//    most efficient, but doesn't work as querying unknown logical indices will
 			//    introduce the logical index and return a default value.
 			// 3) Loop through all physical elements of <vtxMultList> and check
 			//    the logical index of the element plug to be <inInfluenceObjectIndex>.
@@ -2261,7 +2261,7 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 			bool foundInfluenceObj = false;
 			mult = 0.0;
 			for (uint x=0, nw=vtxMultList.numElements(); x<nw; ++x)
-			{			
+			{
 				MPlug multValuePlug = vtxMultList.elementByPhysicalIndex(x);
 				if (multValuePlug.logicalIndex()==inInfluenceObjectIndex)
 				{
@@ -2270,31 +2270,31 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 					break;
 				}
 			}
-				
+
 			// Don't append 0.0 mults
 			if (mult==0.0f)
 				continue;
-			
+
 			// Clear unused logical entries and make room for logical element index
 			uint logical_index = vtxMultCmpd.logicalIndex();
 			for (uint out_weights_size = outWeights.length(); out_weights_size<=logical_index; ++out_weights_size)
 				outWeights.append(0.0);
-			
-			outWeights[logical_index] = (double)mult;	
+
+			outWeights[logical_index] = (double)mult;
 		}
 	}else if(influenceType == 1){
 		uint weightlists_count = ptMultList.numElements();
 		for (uint w=0; w<weightlists_count; ++w)
-		{			
+		{
 			// if we get here and foundInfluenceObj is false, we must have a point attractor
 			MPlug vtxMultCmpd = ptMultList.elementByPhysicalIndex(w, &status);
 			if (MFAIL(status))
 				continue;
-		
+
 			MPlug vtxMultList = vtxMultCmpd.child(stretchMeshDeformer::attrctrVrtMult, &status);
 			if (MFAIL(status))
 				continue;
-			
+
 			mult = 0.0;
 			for (uint x=0, nw=vtxMultList.numElements(); x<nw; ++x)
 			{
@@ -2309,13 +2309,13 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 			// Don't append 0.0 mults
 			if (mult==0.0f)
 				continue;
-		
+
 			// Clear unused logical entries and make room for logical element index
 			uint logical_index = vtxMultCmpd.logicalIndex();
 			for (uint out_weights_size = outWeights.length(); out_weights_size<=logical_index; ++out_weights_size)
 				outWeights.append(0.0);
 
-			outWeights[logical_index] = (double)mult;		
+			outWeights[logical_index] = (double)mult;
 		}
 	}else if(influenceType == 3){
 		uint weightlists_count = crvColliderMultList.numElements();
@@ -2324,15 +2324,15 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 			MPlug vtxMultCmpd = crvColliderMultList.elementByPhysicalIndex(w, &status);
 			if (MFAIL(status))
 				continue;
-			
+
 			MPlug vtxMultList = vtxMultCmpd.child(stretchMeshDeformer::crvColliderVrtMult, &status);
 			if (MFAIL(status))
 				continue;
-			
+
 			bool foundInfluenceObj = false;
 			mult = 0.0;
 			for (uint x=0, nw=vtxMultList.numElements(); x<nw; ++x)
-			{			
+			{
 				MPlug multValuePlug = vtxMultList.elementByPhysicalIndex(x);
 				if (multValuePlug.logicalIndex()==inInfluenceObjectIndex)
 				{
@@ -2341,17 +2341,17 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 					break;
 				}
 			}
-			
+
 			// Don't append 0.0 mults
 			if (mult==0.0f)
 				continue;
-			
+
 			// Clear unused logical entries and make room for logical element index
 			uint logical_index = vtxMultCmpd.logicalIndex();
 			for (uint out_weights_size = outWeights.length(); out_weights_size<=logical_index; ++out_weights_size)
 				outWeights.append(0.0);
-			
-			outWeights[logical_index] = (double)mult;	
+
+			outWeights[logical_index] = (double)mult;
 		}
 	}else if(influenceType == 4){
 		uint weightlists_count = mshColliderMultList.numElements();
@@ -2360,15 +2360,15 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 			MPlug vtxMultCmpd = mshColliderMultList.elementByPhysicalIndex(w, &status);
 			if (MFAIL(status))
 				continue;
-			
+
 			MPlug vtxMultList = vtxMultCmpd.child(stretchMeshDeformer::mshColliderVrtMult, &status);
 			if (MFAIL(status))
 				continue;
-			
+
 			bool foundInfluenceObj = false;
 			mult = 0.0;
 			for (uint x=0, nw=vtxMultList.numElements(); x<nw; ++x)
-			{			
+			{
 				MPlug multValuePlug = vtxMultList.elementByPhysicalIndex(x);
 				if (multValuePlug.logicalIndex()==inInfluenceObjectIndex)
 				{
@@ -2377,17 +2377,17 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 					break;
 				}
 			}
-			
+
 			// Don't append 0.0 mults
 			if (mult==0.0f)
 				continue;
-			
+
 			// Clear unused logical entries and make room for logical element index
 			uint logical_index = vtxMultCmpd.logicalIndex();
 			for (uint out_weights_size = outWeights.length(); out_weights_size<=logical_index; ++out_weights_size)
 				outWeights.append(0.0);
-			
-			outWeights[logical_index] = (double)mult;	
+
+			outWeights[logical_index] = (double)mult;
 		}
 	}else if(influenceType == 5){
 		uint weightlists_count = sphereColliderMultList.numElements();
@@ -2396,15 +2396,15 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 			MPlug vtxMultCmpd = sphereColliderMultList.elementByPhysicalIndex(w, &status);
 			if (MFAIL(status))
 				continue;
-			
+
 			MPlug vtxMultList = vtxMultCmpd.child(stretchMeshDeformer::primSphrColliderVrtMult, &status);
 			if (MFAIL(status))
 				continue;
-			
+
 			bool foundInfluenceObj = false;
 			mult = 0.0;
 			for (uint x=0, nw=vtxMultList.numElements(); x<nw; ++x)
-			{			
+			{
 				MPlug multValuePlug = vtxMultList.elementByPhysicalIndex(x);
 				if (multValuePlug.logicalIndex()==inInfluenceObjectIndex)
 				{
@@ -2413,20 +2413,20 @@ void stretchMeshDeformer::GetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 					break;
 				}
 			}
-			
+
 			// Don't append 0.0 mults
 			if (mult==0.0f)
 				continue;
-			
+
 			// Clear unused logical entries and make room for logical element index
 			uint logical_index = vtxMultCmpd.logicalIndex();
 			for (uint out_weights_size = outWeights.length(); out_weights_size<=logical_index; ++out_weights_size)
 				outWeights.append(0.0);
-			
-			outWeights[logical_index] = (double)mult;	
+
+			outWeights[logical_index] = (double)mult;
 		}
 	}
-	
+
 }
 
 //
@@ -2450,8 +2450,8 @@ void stretchMeshDeformer::SetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 	}else if(influenceType == 5){
 		multList = MPlug(this_mobj, stretchMeshDeformer::primSphrColliderVrtMultList);
 	}
-	
-	
+
+
 	for (uint w=0, nw=inWeights.length(); w<nw; ++w)
 	{
 		MPlug vtxMultCmpd = multList.elementByLogicalIndex(w, &status);
@@ -2480,14 +2480,14 @@ void stretchMeshDeformer::SetInfluenceObjectWeights(uint inInfluenceObjectIndex,
 			if (MFAIL(status))
 				continue;
 		}
-		
-		
+
+
 		double mult = inWeights[w];
 
 		// We clamp the per vertex mults from 0.0 - 1.0
 		if (mult>1.0f)		mult = 1.0f;
 		else if (mult<0.0f)	mult = 0.0f;
-		
+
 		// Set new mult
 		MPlug vtxMultPlug = vtxMultList.elementByLogicalIndex(inInfluenceObjectIndex);
 		double oldMult;

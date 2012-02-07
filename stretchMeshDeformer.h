@@ -5,7 +5,7 @@
 //  File: stretchMeshDeformer.h
 //
 //  Description:
-// 	A deformer which defines a local coordinate space for each vertex based on the neighboring 
+// 	A deformer which defines a local coordinate space for each vertex based on the neighboring
 //	vertices.  The deformer positions each vertex based on its local coordinates on each iteration.
 //	The result is a deformer that tries to maintain the local characteristics of a surface.  Upstream
 //	deformations are "seen" by the stretchMesh resulting in a propagation of local deformations.
@@ -41,7 +41,7 @@ public:
 
 	static  void*		creator();
 	static  MStatus		initialize();
-	
+
 	virtual void		postConstructor();
 	virtual MStatus		connectionMade(const MPlug& plug, const MPlug& otherPlug, bool asSrc);
 
@@ -63,9 +63,9 @@ public:
 	static MObject		collisions;		// whether or not to evaluate collision objects
 	static MObject		meanWeightsList;
 	static MObject		meanWeights;
-	static MObject		connVrtIdList;	
+	static MObject		connVrtIdList;
 	static MObject		connVrtId;
-	static MObject		connVrtIdNrmlOrderList;	
+	static MObject		connVrtIdNrmlOrderList;
 	static MObject		connVrtIdNrmlOrder;
 	static MObject		enableScaleSafe;
 	static MObject		b;
@@ -78,16 +78,16 @@ public:
 	static MObject		attrctrStrength;
 	static MObject		attrctrVrtMultList;
 	static MObject		attrctrVrtMult;
-	static MObject		attrPaintWeights;	// Temporarily stores the weights for one of the influences 
-	static MObject		attrPaintTrans;		// Identifies the influence whose weights are used in the paintWeights attribute 
-	static MObject		attrPaintArrDirty;	// Gets marked dirty when the values in paintWeights change 
+	static MObject		attrPaintWeights;	// Temporarily stores the weights for one of the influences
+	static MObject		attrPaintTrans;		// Identifies the influence whose weights are used in the paintWeights attribute
+	static MObject		attrPaintArrDirty;	// Gets marked dirty when the values in paintWeights change
 	// curve attractors
 	static MObject		crvAttractorCurve;
 	static MObject		crvAttractorStrength;
 	static MObject		crvAttractorVrtMultList;
 	static MObject		crvAttractorVrtMult;
 	static MObject		crvAttractorAttachUVList;
-	static MObject		crvAttractorAttachUV;	
+	static MObject		crvAttractorAttachUV;
 	// end curve attractors
 	static MObject		mshCollider;
 	static MObject		mshColliderPad;
@@ -111,7 +111,7 @@ public:
 private:
 	// Methods
 	static MVector project_vrt_to_plane(MVector vrt, MVector normal, double d);
-	
+
 protected:
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  Methods below are necessary to support painting of per-vertex attractor multiplier //
@@ -124,10 +124,11 @@ protected:
 	void SetInfluenceObjectWeights(uint inInfluenceObjectIndex, const MDoubleArray& inWeights, uint influenceType) const;
 	void GetPaintWeights(MDoubleArray& outWeights) const;
 	void RemoveCallbacks();
-	
+
 	MCallbackId mWeightListCallbackId;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 };
 
 #endif
+
