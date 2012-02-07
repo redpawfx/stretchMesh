@@ -1,0 +1,643 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7203A44B14E19970004AD4A4 /* CRSpline.h in Headers */ = {isa = PBXBuildFile; fileRef = 7203A44814E19970004AD4A4 /* CRSpline.h */; };
+		7203A44C14E19970004AD4A4 /* curveColliderLocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7203A44914E19970004AD4A4 /* curveColliderLocator.cpp */; };
+		7203A44D14E19970004AD4A4 /* curveColliderLocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 7203A44A14E19970004AD4A4 /* curveColliderLocator.h */; };
+		7203A45614E19998004AD4A4 /* IncludeMFnPluginClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 7203A44E14E19998004AD4A4 /* IncludeMFnPluginClass.h */; };
+		7203A45714E19998004AD4A4 /* ksUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7203A44F14E19998004AD4A4 /* ksUtils.h */; };
+		7203A45814E19998004AD4A4 /* pluginMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7203A45014E19998004AD4A4 /* pluginMain.cpp */; };
+		7203A45914E19998004AD4A4 /* stretchMeshCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7203A45114E19998004AD4A4 /* stretchMeshCmd.cpp */; };
+		7203A45A14E19998004AD4A4 /* stretchMeshCmd.h in Headers */ = {isa = PBXBuildFile; fileRef = 7203A45214E19998004AD4A4 /* stretchMeshCmd.h */; };
+		7203A45B14E19998004AD4A4 /* stretchMeshConsts.h in Headers */ = {isa = PBXBuildFile; fileRef = 7203A45314E19998004AD4A4 /* stretchMeshConsts.h */; };
+		7203A45C14E19998004AD4A4 /* stretchMeshDeformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7203A45414E19998004AD4A4 /* stretchMeshDeformer.cpp */; };
+		7203A45D14E19998004AD4A4 /* stretchMeshDeformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7203A45514E19998004AD4A4 /* stretchMeshDeformer.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		7203A44814E19970004AD4A4 /* CRSpline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRSpline.h; sourceTree = "<group>"; };
+		7203A44914E19970004AD4A4 /* curveColliderLocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = curveColliderLocator.cpp; sourceTree = "<group>"; };
+		7203A44A14E19970004AD4A4 /* curveColliderLocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = curveColliderLocator.h; sourceTree = "<group>"; };
+		7203A44E14E19998004AD4A4 /* IncludeMFnPluginClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IncludeMFnPluginClass.h; sourceTree = "<group>"; };
+		7203A44F14E19998004AD4A4 /* ksUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ksUtils.h; sourceTree = "<group>"; };
+		7203A45014E19998004AD4A4 /* pluginMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pluginMain.cpp; sourceTree = "<group>"; };
+		7203A45114E19998004AD4A4 /* stretchMeshCmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stretchMeshCmd.cpp; sourceTree = "<group>"; };
+		7203A45214E19998004AD4A4 /* stretchMeshCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stretchMeshCmd.h; sourceTree = "<group>"; };
+		7203A45314E19998004AD4A4 /* stretchMeshConsts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stretchMeshConsts.h; sourceTree = "<group>"; };
+		7203A45414E19998004AD4A4 /* stretchMeshDeformer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stretchMeshDeformer.cpp; sourceTree = "<group>"; };
+		7203A45514E19998004AD4A4 /* stretchMeshDeformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stretchMeshDeformer.h; sourceTree = "<group>"; };
+		D2AAC0630554660B00DB518D /* stretchMesh.bundle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = stretchMesh.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D289988505E68E00004EDB86 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* geometryCacheConverterPlugin */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				8A7F063208688F460064D097 /* Mel */,
+				8A7F063308688F580064D097 /* Resources */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = geometryCacheConverterPlugin;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				7203A44E14E19998004AD4A4 /* IncludeMFnPluginClass.h */,
+				7203A44F14E19998004AD4A4 /* ksUtils.h */,
+				7203A45014E19998004AD4A4 /* pluginMain.cpp */,
+				7203A45114E19998004AD4A4 /* stretchMeshCmd.cpp */,
+				7203A45214E19998004AD4A4 /* stretchMeshCmd.h */,
+				7203A45314E19998004AD4A4 /* stretchMeshConsts.h */,
+				7203A45414E19998004AD4A4 /* stretchMeshDeformer.cpp */,
+				7203A45514E19998004AD4A4 /* stretchMeshDeformer.h */,
+				7203A44814E19970004AD4A4 /* CRSpline.h */,
+				7203A44914E19970004AD4A4 /* curveColliderLocator.cpp */,
+				7203A44A14E19970004AD4A4 /* curveColliderLocator.h */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC0630554660B00DB518D /* stretchMesh.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8A7F063208688F460064D097 /* Mel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Mel;
+			sourceTree = "<group>";
+		};
+		8A7F063308688F580064D097 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC0600554660B00DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7203A44B14E19970004AD4A4 /* CRSpline.h in Headers */,
+				7203A44D14E19970004AD4A4 /* curveColliderLocator.h in Headers */,
+				7203A45614E19998004AD4A4 /* IncludeMFnPluginClass.h in Headers */,
+				7203A45714E19998004AD4A4 /* ksUtils.h in Headers */,
+				7203A45A14E19998004AD4A4 /* stretchMeshCmd.h in Headers */,
+				7203A45B14E19998004AD4A4 /* stretchMeshConsts.h in Headers */,
+				7203A45D14E19998004AD4A4 /* stretchMeshDeformer.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D2AAC0620554660B00DB518D /* stretchMesh */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A7F05ED086863A70064D097 /* Build configuration list for PBXNativeTarget "stretchMesh" */;
+			buildPhases = (
+				D2AAC0600554660B00DB518D /* Headers */,
+				D2AAC0610554660B00DB518D /* Sources */,
+				D289988505E68E00004EDB86 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = stretchMesh;
+			productName = geometryCacheConverterPlugin;
+			productReference = D2AAC0630554660B00DB518D /* stretchMesh.bundle */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 8A7F05F1086863A70064D097 /* Build configuration list for PBXProject "stretchmesh" */;
+			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 08FB7794FE84155DC02AAC07 /* geometryCacheConverterPlugin */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC0620554660B00DB518D /* stretchMesh */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2AAC0610554660B00DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7203A44C14E19970004AD4A4 /* curveColliderLocator.cpp in Sources */,
+				7203A45814E19998004AD4A4 /* pluginMain.cpp in Sources */,
+				7203A45914E19998004AD4A4 /* stretchMeshCmd.cpp in Sources */,
+				7203A45C14E19998004AD4A4 /* stretchMeshDeformer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6313E7E9114F221100BE7D71 /* Debug-2011 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(MAYA_DIRECTORY)/devkit/include/maya/OpenMayaMac.h";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MAC_PLUGIN,
+					_BOOL,
+					REQUIRE_IOSTREAM,
+				);
+				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
+				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
+				LIBRARY_STYLE = BUNDLE;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2011.04;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				SYMROOT = ../build;
+				VALID_ARCHS = "i386 x86_64";
+			};
+			name = "Debug-2011";
+		};
+		6313E7EA114F221100BE7D71 /* Debug-2011 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = bundle;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-framework",
+					OpenGL,
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMayaUI",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = lightning;
+				ZERO_LINK = YES;
+			};
+			name = "Debug-2011";
+		};
+		6313E7EB114F221600BE7D71 /* Release-2011 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(MAYA_DIRECTORY)/devkit/include/maya/OpenMayaMac.h";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MAC_PLUGIN,
+					_BOOL,
+					REQUIRE_IOSTREAM,
+				);
+				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
+				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
+				LIBRARY_STYLE = BUNDLE;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2011;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				SYMROOT = ../build;
+				VALID_ARCHS = "i386 x86_64";
+			};
+			name = "Release-2011";
+		};
+		6313E7EC114F221600BE7D71 /* Release-2011 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = bundle;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-framework",
+					OpenGL,
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMayaUI",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = lightning;
+				ZERO_LINK = NO;
+			};
+			name = "Release-2011";
+		};
+		63805E980F98F02E000554A3 /* Debug-2008 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(MAYA_DIRECTORY)/devkit/include/maya/OpenMayaMac.h";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MAC_PLUGIN,
+					_BOOL,
+					REQUIRE_IOSTREAM,
+				);
+				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
+				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
+				LIBRARY_STYLE = BUNDLE;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2008;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				SYMROOT = ../build;
+			};
+			name = "Debug-2008";
+		};
+		63805E990F98F02E000554A3 /* Release-2008 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(MAYA_DIRECTORY)/devkit/include/maya/OpenMayaMac.h";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MAC_PLUGIN,
+					_BOOL,
+					REQUIRE_IOSTREAM,
+				);
+				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
+				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
+				LIBRARY_STYLE = BUNDLE;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2008;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				SYMROOT = ../build;
+			};
+			name = "Release-2008";
+		};
+		63805E9A0F98F02E000554A3 /* Debug-2008 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = bundle;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-framework",
+					OpenGL,
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMayaUI",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = animImportUtil;
+				ZERO_LINK = YES;
+			};
+			name = "Debug-2008";
+		};
+		63805E9B0F98F02E000554A3 /* Release-2008 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = bundle;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-framework",
+					OpenGL,
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMayaUI",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = animImportUtil;
+				ZERO_LINK = NO;
+			};
+			name = "Release-2008";
+		};
+		727DE4CC14BBB337002D1004 /* Debug-2012 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(MAYA_DIRECTORY)/devkit/include/maya/OpenMayaMac.h";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MAC_PLUGIN,
+					_BOOL,
+					REQUIRE_IOSTREAM,
+				);
+				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
+				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
+				LIBRARY_STYLE = BUNDLE;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2012.05;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				SYMROOT = ../build;
+				VALID_ARCHS = x86_64;
+			};
+			name = "Debug-2012";
+		};
+		727DE4CD14BBB337002D1004 /* Debug-2012 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = bundle;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-framework",
+					OpenGL,
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMayaUI",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = stretchMesh;
+				ZERO_LINK = YES;
+			};
+			name = "Debug-2012";
+		};
+		8A7F05EE086863A70064D097 /* Debug-2009 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = bundle;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-framework",
+					OpenGL,
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMayaUI",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = animImportUtil;
+				ZERO_LINK = YES;
+			};
+			name = "Debug-2009";
+		};
+		8A7F05EF086863A70064D097 /* Release-2009 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = bundle;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-framework",
+					OpenGL,
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMayaUI",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = lumaAnimIO;
+				SYMROOT = ./build;
+				ZERO_LINK = NO;
+			};
+			name = "Release-2009";
+		};
+		8A7F05F2086863A70064D097 /* Debug-2009 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(MAYA_DIRECTORY)/devkit/include/maya/OpenMayaMac.h";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MAC_PLUGIN,
+					_BOOL,
+					REQUIRE_IOSTREAM,
+				);
+				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
+				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
+				LIBRARY_STYLE = BUNDLE;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2009;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				SYMROOT = ../build;
+				VALID_ARCHS = "i386 x86_64";
+			};
+			name = "Debug-2009";
+		};
+		8A7F05F3086863A70064D097 /* Release-2009 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(MAYA_DIRECTORY)/devkit/include/maya/OpenMayaMac.h";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MAC_PLUGIN,
+					_BOOL,
+					REQUIRE_IOSTREAM,
+				);
+				HEADER_SEARCH_PATHS = "$(MAYA_DIRECTORY)/devkit/include/";
+				LIBRARY_SEARCH_PATHS = "$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS";
+				LIBRARY_STYLE = BUNDLE;
+				MAYA_DIRECTORY = /Applications/Autodesk/maya2009;
+				OTHER_LDFLAGS = (
+					"-lOpenMaya",
+					"-lFoundation",
+					"-Wl,-executable_path,$(MAYA_DIRECTORY)/Maya.app/Contents/MacOS",
+					"-lOpenMaya",
+					"-lOpenMayaAnim",
+					"-lFoundation",
+				);
+				SYMROOT = ../build;
+				VALID_ARCHS = "i386 x86_64";
+			};
+			name = "Release-2009";
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8A7F05ED086863A70064D097 /* Build configuration list for PBXNativeTarget "stretchMesh" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				727DE4CD14BBB337002D1004 /* Debug-2012 */,
+				6313E7EA114F221100BE7D71 /* Debug-2011 */,
+				8A7F05EE086863A70064D097 /* Debug-2009 */,
+				63805E9A0F98F02E000554A3 /* Debug-2008 */,
+				6313E7EC114F221600BE7D71 /* Release-2011 */,
+				8A7F05EF086863A70064D097 /* Release-2009 */,
+				63805E9B0F98F02E000554A3 /* Release-2008 */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Debug-2012";
+		};
+		8A7F05F1086863A70064D097 /* Build configuration list for PBXProject "stretchmesh" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				727DE4CC14BBB337002D1004 /* Debug-2012 */,
+				6313E7E9114F221100BE7D71 /* Debug-2011 */,
+				8A7F05F2086863A70064D097 /* Debug-2009 */,
+				63805E980F98F02E000554A3 /* Debug-2008 */,
+				6313E7EB114F221600BE7D71 /* Release-2011 */,
+				8A7F05F3086863A70064D097 /* Release-2009 */,
+				63805E990F98F02E000554A3 /* Release-2008 */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Debug-2012";
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
