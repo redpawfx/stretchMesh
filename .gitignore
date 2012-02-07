@@ -1,0 +1,15 @@
+/*.kdev4
+/*.o
+/*.so
+*.tlog
+*.obj
+*.log
+*.exp
+*.lastbuildstate
+*.lib
+*.manifest
+*.unsuccessfulbuild
+*.pdb
+*.user
+*.suo
+*.sdf
